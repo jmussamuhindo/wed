@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Wedding Invitation</title>
 
     <!-- ✅ IMPORTANT FOR MOBILE -->
@@ -30,7 +31,6 @@
             justify-content: space-between;
         }
 
-        /* ✅ Two equal columns */
         .section {
             width: 48%;
         }
@@ -38,6 +38,11 @@
         h2 {
             color: #6b3e2e;
             letter-spacing: 1px;
+        }
+
+        h3 {
+            color: #b76e79;
+            margin-top: 25px;
         }
 
         .bible {
@@ -65,6 +70,11 @@
             font-weight: bold;
         }
 
+        .contact {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
         .countdown {
             margin-top: 20px;
             font-size: 16px;
@@ -72,34 +82,12 @@
             font-weight: bold;
         }
 
-        .contact {
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        /* ✅ MOBILE LAYOUT */
         @media (max-width: 700px) {
             .container {
                 flex-direction: column;
-                gap: 30px;
             }
             .section {
                 width: 100%;
-            }
-            .names {
-                font-size: 22px;
-            }
-            .highlight {
-                font-size: 18px;
-            }
-            .countdown {
-                font-size: 15px;
-            }
-            .bible {
-                font-size: 13px;
-            }
-            .card {
-                padding: 20px;
             }
         }
     </style>
@@ -108,91 +96,107 @@
 <body>
 
 <div class="card">
+    <div class="container">
 
-<div class="container">
+        <!-- ✅ ENGLISH -->
+        <div class="section">
+            <h2>Wedding Invitation</h2>
 
-    <!-- ✅ ENGLISH COLUMN -->
-    <div class="section">
-        <h2>Wedding Invitation</h2>
+            <div class="bible">
+                “Above all, keep loving one another earnestly, since love covers a multitude of sins.”<br>
+                — 1 Peter 4:8
+            </div>
 
-        <div class="bible">
-            “Above all, keep loving one another earnestly, since love covers a multitude of sins.”<br>
-            — 1 Peter 4:8
+            <p><strong>The families of</strong><br>
+                MUNYAMUNDU CYPRIEN &amp; YANKURIJE BEATHA<br>
+                and<br>
+                MUHINDO JEAN &amp; SEBIHONGO MUHORAKEYE MARIE
+            </p>
+
+            <p>Request the honor of your presence at the holy matrimony of their children</p>
+
+            <div class="names">Adeline Helga Munezero</div>
+            <div class="and">&amp;</div>
+            <div class="names">Mussa Justin Muhindo</div>
+
+            <p class="highlight">June 20, 2026</p>
+
+            <!-- ✅ EVENT 1 -->
+            <h3>📍 Sacrament of Marriage (Wedding Mass)</h3>
+            <p>
+                2:00 PM<br>
+                Parish of Saint Theresa and Saint John Bosco<br>
+                Kopcińskiego 1/3, Łódź, Poland
+            </p>
+
+            <!-- ✅ EVENT 2 -->
+            <h3>🎉 Wedding Reception</h3>
+            <p>
+                4:00 PM<br>
+                Oratorium Hall<br>
+                Parish of Saint Theresa and Saint John Bosco
+            </p>
+
+            <p>Your presence will be a great privilege and a true blessing to us.</p>
+
+            <div class="contact">
+                📞 513 741 751<br>
+                📞 781 208 797
+            </div>
+
+            <div class="countdown">⏳ {{ days_left }} days to go</div>
         </div>
 
-        <p><b>The families of MUNYAMUNDU CYPRIEN &amp; YANKURIJE BEATHA</b><br>
-        and<br>
-        <b>MUHINDO JEAN &amp; SEBIHONGO MUHORAKEYE MARIE, represented by SILAS NDAGIJIMANA</b></p>
+        <!-- ✅ KINYARWANDA -->
+        <div class="section">
+            <h2>Ubutumire bw'Ubukwe</h2>
 
-        <p>Request the honor of your presence at the holy matrimony of their children</p>
+            <div class="bible">
+                “Mbere ya byose mugirirane urukundo nyarwo,
+                kuko urukundo rubabarira byose.”<br>
+                — 1 Petero 4:8
+            </div>
 
-        <div class="names">Adeline Helga Munezero</div>
-        <div class="and">&amp;</div>
-        <div class="names">Mussa Justin Muhindo</div>
+            <p><strong>Imiryango ya</strong><br>
+                MUNYAMUNDU CYPRIEN na YANKURIJE BEATHA<br>
+                n’uwa<br>
+                MUHINDO JEAN na SEBIHONGO MUHORAKEYE MARIE
+            </p>
 
-        <p class="highlight">June 20, 2026 – 2:00 PM</p>
+            <p>Irabatumira kwifatanya nabo mu byishimo by’ubukwe bw’abana babo</p>
 
-        <p>
-            Mass in Parish of Saint Theresa and John Bosco<br>
-            Kopcinskiego 1/3, Lodz, Poland
-        </p>
+            <div class="names">Adeline Helga Munezero</div>
+            <div class="and">&amp;</div>
+            <div class="names">Mussa Justin Muhindo</div>
 
-        <p>
-            The reception will take place in the Oratorium Hall of the Parish of Saint Theresa and John Bosco at 4:00 PM
-        </p>
+            <p class="highlight">20 Kamena 2026</p>
 
-        <p>Your presence will be a great privilege and a true blessing to us</p>
+            <!-- ✅ EVENT 1 -->
+            <h3>📍 Missa yo guhana Isakaramentu yo gushingirwa</h3>
+            <p>
+                Saa 2:00<br>
+                muri Paruwasi ya Mutagatifu Tereza na Yohani Bosco<br>
+                Kopcińskiego 1/3, Łódź
+            </p>
 
-        <div class="contact">
-            📞 513 741 751<br>
-            📞 781 208 797
+            <!-- ✅ EVENT 2 -->
+            <h3>🎉 Abatumiwe bazakirirwa muri sale ya Paruwasi ya Mutagatifu Tereza na Yohani Bosco</h3>
+            <p>
+                Saa 4:00<br>
+                Salle ya Oratoire ya Paruwasi
+            </p>
+
+            <p>Kuboneka kwanyu bizatubera umugisha n’ibyishimo byinshi.</p>
+
+            <div class="contact">
+                📞 513 741 751<br>
+                📞 781 208 797
+            </div>
+
+            <div class="countdown">⏳ Hasigaye iminsi {{ days_left }}</div>
         </div>
 
-        <div class="countdown">⏳ {{ days_left }} Days to Go</div>
     </div>
-
-    <!-- ✅ KINYARWANDA COLUMN -->
-    <div class="section">
-        <h2>Ubutumire bw'ubukwe</h2>
-
-        <div class="bible">
-            “Mbere ya byose ariko mugirirane urukundo nyarwo, kuko urukundo rubabalira byose”<br>
-            — 1 Petero 4:8
-        </div>
-
-        <p><b>Umuryango wa MUNYAMUNDU CYPRIEN &amp; YANKURIJE BEATHA</b><br>
-        n'uwa<br>
-        <b>MUHINDO JEAN &amp; SEBIHONGO MUHORAKEYE MARIE, uhagarariwe na SILAS NDAGIJIMANA</b></p>
-
-        <p>Bishimiye gusangira namwe ibyishimo by’ubukwe bw’abana babo</p>
-
-        <div class="names">Adeline Helga Munezero</div>
-        <div class="and">&amp;</div>
-        <div class="names">Mussa Justin Muhindo</div>
-
-        <p class="highlight">20 Kamena 2026 – Saa 2:00</p>
-
-        <p>
-            Paruwasi ya Mutagatifu Theresa na Yohani Bosco<br>
-            Kopcinskiego 1/3, Lodz, Poland
-        </p>
-
-        <p>
-            Ibirori byacu bizakomereza muri Sale ya Paruwasi ya Mutagatifu Theresa na Yohani Bosco (Oratoire) saa 4:00
-        </p>
-
-        <p>Kuboneka kwanyu bizatubera umugisha n’ibyishimo byinshi</p>
-
-        <div class="contact">
-            📞 513 741 751<br>
-            📞 781 208 797
-        </div>
-
-        <div class="countdown">⏳ Hasigaye iminsi {{ days_left }}</div>
-    </div>
-
-</div>
-
 </div>
 
 </body>
