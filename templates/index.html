@@ -30,8 +30,9 @@
             justify-content: space-between;
         }
 
+        /* ✅ Two equal columns */
         .section {
-            width: 32%;
+            width: 48%;
         }
 
         h2 {
@@ -76,18 +77,8 @@
             font-size: 14px;
         }
 
-        /* ✅ TABLET SIZE */
-        @media (max-width: 900px) {
-            .container {
-                flex-wrap: wrap;
-            }
-            .section {
-                width: 48%;
-            }
-        }
-
-        /* ✅ MOBILE SIZE */
-        @media (max-width: 600px) {
+        /* ✅ MOBILE LAYOUT */
+        @media (max-width: 700px) {
             .container {
                 flex-direction: column;
                 gap: 30px;
@@ -120,7 +111,7 @@
 
 <div class="container">
 
-    <!-- ENGLISH -->
+    <!-- ✅ ENGLISH COLUMN -->
     <div class="section">
         <h2>Wedding Invitation</h2>
 
@@ -145,6 +136,7 @@
             Mass in Parish of Saint Theresa and John Bosco<br>
             Kopcinskiego 1/3, Lodz, Poland
         </p>
+
         <p>
             The reception will take place in the Oratorium Hall of the Parish of Saint Theresa and John Bosco at 4:00 PM
         </p>
@@ -159,7 +151,7 @@
         <div class="countdown">⏳ {{ days_left }} Days to Go</div>
     </div>
 
-    <!-- KINYARWANDA -->
+    <!-- ✅ KINYARWANDA COLUMN -->
     <div class="section">
         <h2>Ubutumire bw'ubukwe</h2>
 
@@ -184,6 +176,7 @@
             Paruwasi ya Mutagatifu Theresa na Yohani Bosco<br>
             Kopcinskiego 1/3, Lodz, Poland
         </p>
+
         <p>
             Ibirori byacu bizakomereza muri Sale ya Paruwasi ya Mutagatifu Theresa na Yohani Bosco (Oratoire) saa 4:00
         </p>
