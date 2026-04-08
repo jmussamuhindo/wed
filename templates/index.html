@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Wedding Invitation</title>
 
-    <!-- ✅ IMPORTANT FOR MOBILE -->
+    <!-- IMPORTANT FOR MOBILE -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
@@ -53,10 +53,12 @@
         }
 
         .names {
-            font-size: 26px;
-            color: #6b3e2e;
+            font-size: 28px;
+            color: #5a2d1f;
             margin: 15px 0;
             font-family: 'Brush Script MT', cursive;
+            font-weight: bold;
+            letter-spacing: 1.5px;
         }
 
         .and {
@@ -75,9 +77,27 @@
             font-size: 14px;
         }
 
-        .countdown {
+        .language-label {
+            background: #e6d8c3;
+            color: #6b3e2e;
+            font-weight: bold;
+            padding: 8px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .divider {
+            width: 70%;
+            margin: 30px auto;
+            border-top: 2px dashed #c9a66b;
+        }
+
+        .countdown-box {
             margin-top: 20px;
-            font-size: 16px;
+            background: #f4eee5;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px;
             color: #b76e79;
             font-weight: bold;
         }
@@ -98,8 +118,10 @@
 <div class="card">
     <div class="container">
 
-        <!-- ✅ ENGLISH -->
+        <!-- ENGLISH -->
         <div class="section">
+            <div class="language-label">🇬🇧 ENGLISH VERSION</div>
+
             <h2>Wedding Invitation</h2>
 
             <div class="bible">
@@ -107,33 +129,32 @@
                 — 1 Peter 4:8
             </div>
 
-            <p><strong>The families of<br>
+            <p><strong>
+                The families of<br>
                 MUNYAMUNDU CYPRIEN &amp; YANKURIJE BEATHA<br>
                 and<br>
-                MUHINDO JEAN &amp; SEBIHONGO MUHORAKEYE MARIE represented by SILAS NDAGIJIMANA
+                MUHINDO JEAN &amp; SEBIHONGO MUHORAKEYE MARIE<br>
+                (represented by SILAS NDAGIJIMANA)
             </strong></p>
 
-            <p>Request the honor of your presence at the holy matrimony of their children: </p>
+            <p>Request the honor of your presence at the holy matrimony of their children:</p>
 
             <div class="names">Adeline Helga Munezero</div>
             <div class="and">&amp;</div>
             <div class="names">Mussa Justin Muhindo</div>
 
-            <p class="highlight"> which will take place on June 20, 2026</p>
+            <p class="highlight">which will take place on June 20, 2026</p>
 
-            <!-- ✅ EVENT 1 -->
-            <h3>🕑2:00 PM, Sacrament of Marriage (Wedding Mass)</h3>
+            <h3>🕑 2:00 PM — Sacrament of Marriage (Wedding Mass)</h3>
             <p>
-                📍 Parish of Saint Theresa and Saint John Bosco<br>
-                🏛️ Kopcińskiego 1/3, Łódź, Poland
+                🏛️ Parish of Saint Theresa and Saint John Bosco<br>
+                📍 Kopcińskiego 1/3, Łódź, Poland
             </p>
 
-            <!-- ✅ EVENT 2 -->
-            <h3> 🕑 4:00 PM, Wedding Reception</h3>
+            <h3>🕓 4:00 PM — Wedding Reception</h3>
             <p>
-                <br>
-                Oratorium Hall<br>
-                Parish of Saint Theresa and Saint John Bosco
+                🏛️ Oratorium Hall<br>
+                📍 Parish of Saint Theresa and Saint John Bosco
             </p>
 
             <p>Your presence will be a great privilege and a true blessing to us.</p>
@@ -143,26 +164,35 @@
                 📞 +48 781 208 797
             </div>
 
-            <div class="countdown">⏳ {{ days_left }} days to go</div>
+            <div class="countdown-box">
+                ⏳ Time remaining:<br>
+                <span id="countdown-en"></span>
+            </div>
         </div>
 
-        <!-- ✅ KINYARWANDA -->
+        <div class="divider"></div>
+
+        <!-- KINYARWANDA -->
         <div class="section">
+            <div class="language-label">🇷🇼 IKINYARWANDA VERSION</div>
+
             <h2>Ubutumire bw'Ubukwe</h2>
 
             <div class="bible">
-                “Mbere ya byose ariko mugirirane iteka urukundo nyarwo,
+                “Mbere ya byose mugirirane iteka urukundo nyarwo,
                 kuko urukundo rubabarira byose.”<br>
                 — 1 Petero 4:8
             </div>
 
-            <p><strong>Imiryango ya<br>
+            <p><strong>
+                Imiryango ya<br>
                 MUNYAMUNDU CYPRIEN na YANKURIJE BEATHA<br>
                 n’uwa<br>
-                MUHINDO JEAN na SEBIHONGO MUHORAKEYE MARIE uhagarariwe na SILAS NDAGIJIMANA
+                MUHINDO JEAN na SEBIHONGO MUHORAKEYE MARIE<br>
+                (uhagarariwe na SILAS NDAGIJIMANA)
             </strong></p>
 
-            <p>Yishimiye kubatumira mubukwe bw'abana babo: </p>
+            <p>Yishimiye kubatumira mu bukwe bw'abana babo:</p>
 
             <div class="names">Adeline Helga Munezero</div>
             <div class="and">&amp;</div>
@@ -170,18 +200,16 @@
 
             <p class="highlight">Buzaba tariki 20 Kamena 2026</p>
 
-            <!-- ✅ EVENT 1 -->
-            <h3> 🕑 Saa 2:00, Misa yo guhana Isakaramentu ryo gushyingirwa</h3>
+            <h3>🕑 Saa 2:00 — Misa yo guhana Isakaramentu ry’Ubukwe</h3>
             <p>
-                📍 Paruwasi ya Mutagatifu Tereza na Yohani Bosco<br>
-                🏛️ Kopcińskiego 1/3, Łódź
+                🏛️ Paruwasi ya Mutagatifu Tereza na Yohani Bosco<br>
+                📍 Kopcińskiego 1/3, Łódź
             </p>
 
-            <!-- ✅ EVENT 2 -->
-            <h3> 🕑 Saa 4:00, Kwakira abatumiwe</h3>
+            <h3>🕓 Saa 4:00 — Kwakira Abatumiwe</h3>
             <p>
-                📍 Sale ya Paruwasi Oratorio<br>
-                🏛️ Kopcińskiego 1/3, Łódź
+                🏛️ Salle ya Oratorio ya Paruwasi<br>
+                📍 Kopcińskiego 1/3, Łódź
             </p>
 
             <p>Kuboneka kwanyu bizatubera umugisha n’ibyishimo byinshi.</p>
@@ -191,11 +219,41 @@
                 📞 +48 781 208 797
             </div>
 
-            <div class="countdown">⏳ Hasigaye iminsi {{ days_left }}</div>
+            <div class="countdown-box">
+                ⏳ Igihe gisigaye:<br>
+                <span id="countdown-rw"></span>
+            </div>
         </div>
 
     </div>
 </div>
+
+<script>
+function startCountdown(elementId) {
+    const weddingDate = new Date("June 20, 2026 14:00:00").getTime();
+
+    setInterval(() => {
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+
+        if (distance < 0) {
+            document.getElementById(elementId).innerHTML = "🎉 Today is the big day!";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((distance / (1000 * 60)) % 60);
+        const seconds = Math.floor((distance / 1000) % 60);
+
+        document.getElementById(elementId).innerHTML =
+            days + " days · " + hours + " hrs · " + minutes + " min · " + seconds + " sec";
+    }, 1000);
+}
+
+startCountdown("countdown-en");
+startCountdown("countdown-rw");
+</script>
 
 </body>
 </html>
