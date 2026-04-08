@@ -9,7 +9,7 @@ def home():
     wedding_date = datetime(2026, 6, 20, 23, 59, 59)
 
     # Current date normalized to midnight
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.now().replace(hour=00, minute=00, second=00, microsecond=00)
 
     days_left = (wedding_date - today).days
 
@@ -18,4 +18,3 @@ def home():
 if __name__ == "__main__":
     # Use debug only locally, not on Render
     app.run(debug=True)
-    
