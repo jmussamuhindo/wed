@@ -239,38 +239,31 @@
 </div>
 
 <script>
-function startCountdown(id, labels, finishedText) {
-    const weddingDate = new Date(2026, 5, 20, 14, 0, 0);
+function startCountdown(id) {
+    const weddingDate = new Date("June 20, 2026 14:00:00").getTime();
 
     setInterval(() => {
-        const now = new Date();
+        const now = new Date().getTime();
+        const d = weddingDate - now;
 
-        // ✅ Count days to MIDNIGHT
-        const todayMidnight = new Date();
-        todayMidnight.setHours(0,0,0,0);
-
-        const weddingMidnight = new Date(2026, 5, 20, 0, 0, 0);
-
-        const days = Math.floor(
-            (weddingMidnight - todayMidnight) / (1000 * 60 * 60 * 24)
-        );
-
-        const diff = weddingDate - now;
-
-        if (diff <= 0) {
-            document.getElementById(id).innerHTML = finishedText;
+        if (d < 0) {
+            document.getElementById(id).innerHTML = "🎉 Dziś jest ten dzień!";
             return;
         }
 
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / (1000 * 60)) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
+        const days = Math.floor(d / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((d / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((d / (1000 * 60)) % 60);
+        const seconds = Math.floor((d / 1000) % 60);
 
         document.getElementById(id).innerHTML =
-            `${days} ${labels.days} · ${hours} ${labels.hours} · ${minutes} ${labels.minutes} · ${seconds} ${labels.seconds}`;
-
+            `${days} dni · ${hours} h · ${minutes} min · ${seconds} s`;
     }, 1000);
 }
+
+startCountdown("countdown-en");
+startCountdown("countdown-rw");
+startCountdown("countdown-pl");
 </script>
 
 </body>
