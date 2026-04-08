@@ -151,6 +151,41 @@
                 ⏳ Time remaining:<br>
                 <span id="countdown-en"></span>
             </div>
+            <script>
+function startCountdown(id, labels, finishedText) {
+    const weddingDate = new Date(2026, 5, 20, 14, 0, 0);
+
+    setInterval(() => {
+        const now = new Date();
+
+        // ✅ Count days to MIDNIGHT
+        const todayMidnight = new Date();
+        todayMidnight.setHours(0,0,0,0);
+
+        const weddingMidnight = new Date(2026, 5, 20, 0, 0, 0);
+
+        const days = Math.floor(
+            (weddingMidnight - todayMidnight) / (1000 * 60 * 60 * 24)
+        );
+
+        const diff = weddingDate - now;
+
+        if (diff <= 0) {
+            document.getElementById(id).innerHTML = finishedText;
+            return;
+        }
+
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        document.getElementById(id).innerHTML =
+            `${days} ${labels.days} · ${hours} ${labels.hours} · ${minutes} ${labels.minutes} · ${seconds} ${labels.seconds}`;
+
+    }, 1000);
+}
+</script>
+``
         </div>
 
         <div class="divider"></div>
