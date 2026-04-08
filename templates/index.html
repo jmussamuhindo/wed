@@ -239,7 +239,7 @@
 </div>
 
 <script>
-function startCountdown(id) {
+function startCountdown(id, lang) {
     const weddingDate = new Date("June 20, 2026 14:00:00").getTime();
 
     setInterval(() => {
@@ -247,7 +247,13 @@ function startCountdown(id) {
         const d = weddingDate - now;
 
         if (d < 0) {
-            document.getElementById(id).innerHTML = "🎉 Dziś jest ten dzień!";
+            if (lang === "en") {
+                document.getElementById(id).innerHTML = "🎉 Today is the day!";
+            } else if (lang === "pl") {
+                document.getElementById(id).innerHTML = "🎉 Dziś jest ten dzień!";
+            } else if (lang === "rw") {
+                document.getElementById(id).innerHTML = "🎉 Uyu munsi ni wo munsi!";
+            }
             return;
         }
 
@@ -256,14 +262,25 @@ function startCountdown(id) {
         const minutes = Math.floor((d / (1000 * 60)) % 60);
         const seconds = Math.floor((d / 1000) % 60);
 
-        document.getElementById(id).innerHTML =
-            `${days} dni · ${hours} h · ${minutes} min · ${seconds} s`;
+        let text = "";
+
+        if (lang === "en") {
+            text = `${days} days · ${hours} hours · ${minutes} minutes · ${seconds} seconds`;
+        } else if (lang === "pl") {
+            text = `${days} dni · ${hours} godz. · ${minutes} min · ${seconds} sek`;
+        } else if (lang === "rw") {
+            text = `${days} iminsi · ${hours} amasaha · ${minutes} iminota · ${seconds} amasegonda`;
+        }
+
+        document.getElementById(id).innerHTML = text;
+
     }, 1000);
 }
 
-startCountdown("countdown-en");
-startCountdown("countdown-rw");
-startCountdown("countdown-pl");
+// Start countdowns
+startCountdown("countdown-en", "en");
+startCountdown("countdown-rw", "rw");
+startCountdown("countdown-pl", "pl");
 </script>
 
 </body>
