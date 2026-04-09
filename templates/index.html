@@ -37,7 +37,6 @@
             max-width: 500px;
         }
 
-        /* FIX: Divider must be full-width to break across flex row */
         .divider {
             width: 100%;
             border: none;
@@ -87,7 +86,6 @@
             font-weight: bold;
         }
 
-        /* FIX: Server-side days banner (now actually shown) */
         .days-banner {
             background: #6b3e2e;
             color: #f4eee5;
@@ -108,9 +106,9 @@
 <body>
 <div class="card">
 
-    <!-- FIX: Flask variable now actually displayed -->
+    <!-- Banner driven by JS — always in sync with countdown -->
     <div class="days-banner">
-        📅 {{ days_left }} days until the wedding!
+        📅 <span id="days-banner-count">...</span> days until the wedding!
     </div>
 
     <div class="container">
@@ -144,7 +142,6 @@
             </div>
         </div>
 
-        <!-- FIX: <hr> instead of <div> for proper full-width divider -->
         <hr class="divider">
 
         <!-- 🇷🇼 KINYARWANDA -->
@@ -164,10 +161,9 @@
             <div class="and">&amp;</div>
             <div class="names">Mussa Justin Muhindo</div>
             <p class="highlight">buzaba Tariki ya 20 Kamena 2026</p>
-            <!-- FIX: Corrected Kinyarwanda time (2PM = Saa 8, 4PM = Saa 10) -->
-            <h3>🕑 Saa 2:00 — Gusezerana imbere y'Imana</h3>
+            <h3>🕑 Saa 2:00 Gusezerana imbere y'Imana</h3>
             <p>🏛️ muri Paruwasi ya Mutagatifu Tereza na Yohani Bosco<br>📍 Kopcińskiego 1/3, Łódź</p>
-            <h3>🕓 Saa 4:00 — Kwakira Abatumiwe</h3>
+            <h3>🕓 Saa 4:00 z'umugoroba — Kwakira Abatumiwe</h3>
             <p>🏛️ Sale ya Oratorio<br>📍 Paruwasi ya Mutagatifu Tereza na Yohani Bosco</p>
             <div class="contact">📞 +48 513 741 751<br>📞 +48 781 208 797</div>
             <div class="countdown-box">
@@ -211,16 +207,22 @@
 </div>
 
 <script>
-    // FIX: clearInterval() added so timer stops after wedding day
-    function startCountdown(id, lang) {
-        const weddingDate = new Date("June 20, 2026 14:00:00").getTime();
+    // Countdown target: midnight of June 20 — day flips at 00:00, not 2 PM
+    const weddingDate = new Date("2026-06-20T00:00:00").getTime();
 
+    function updateBanner(days) {
+        const el = document.getElementById("days-banner-count");
+        if (el) el.textContent = days > 0 ? days : "0";
+    }
+
+    function startCountdown(id, lang) {
         const interval = setInterval(() => {
             const now = new Date().getTime();
             const d = weddingDate - now;
 
             if (d <= 0) {
-                clearInterval(interval); // ✅ stops the loop
+                clearInterval(interval);
+                updateBanner(0);
                 const msg = lang === "en" ? "🎉 Today is the day!"
                           : lang === "pl" ? "🎉 Dziś jest ten dzień!"
                           : "🎉 Uyu munsi ni wo munsi!";
@@ -232,6 +234,9 @@
             const hours   = Math.floor((d / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((d / (1000 * 60)) % 60);
             const seconds = Math.floor((d / 1000) % 60);
+
+            // Banner stays in sync with the EN countdown
+            if (lang === "en") updateBanner(days);
 
             const text = lang === "en"
                 ? `${days} days · ${hours} hours · ${minutes} minutes · ${seconds} seconds`
