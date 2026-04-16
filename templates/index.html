@@ -239,10 +239,10 @@
             if (lang === "en") updateBanner(days);
 
             const text = lang === "en"
-                ? `${days} days · ${hours} hours · ${minutes} minutes · ${seconds} seconds`
+                ? `${days} days : ${hours} hours : ${minutes} minutes : ${seconds} seconds`
                 : lang === "pl"
-                ? `${days} dni · ${hours} godz. · ${minutes} min · ${seconds} sek`
-                : `${days} iminsi · ${hours} amasaha · ${minutes} iminota · ${seconds} amasegonda`;
+                ? `${days} dni : ${hours} godz. : ${minutes} min : ${seconds} sek`
+                : `${days} iminsi : ${hours} amasaha : ${minutes} iminota : ${seconds} amasegonda`;
 
             document.getElementById(id).innerHTML = text;
         }, 1000);
