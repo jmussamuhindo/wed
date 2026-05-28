@@ -1,0 +1,38 @@
+# Render Blueprint — paste this repo into Render and it auto-configures.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: wedding-confirmation
+    runtime: python
+    plan: free                # Use 'starter' or higher if you want a persistent disk.
+    rootDir: wedding_rsvp     # Remove this line if you're deploying ONLY the wedding_rsvp folder as the repo root.
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: SECRET_KEY
+        generateValue: true   # Render generates a strong random value once and reuses it.
+      - key: ADMIN_PASSWORD
+        sync: false           # Render asks YOU to type this in the dashboard. Set a strong one!
+      # --- Optional: enable email notifications by filling these in the Render dashboard ---
+      - key: SMTP_HOST
+        sync: false           # e.g. smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false           # e.g. jmussamuhindo@gmail.com
+      - key: SMTP_PASS
+        sync: false           # Gmail "App Password" — NOT your regular password
+      - key: NOTIFY_EMAIL
+        sync: false           # where notification emails are sent
+
+    # === Persistent storage ===
+    # On the FREE plan, the filesystem is wiped on every redeploy, so responses.csv
+    # resets. To keep your data permanently, switch plan to "starter" (or higher)
+    # and uncomment the `disk:` block below. (Alternatively: hit "Export CSV"
+    # frequently to keep an off-server backup.)
+    # disk:
+    #   name: rsvp-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
