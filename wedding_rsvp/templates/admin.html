@@ -297,69 +297,110 @@
         }
         .row-count strong { color: var(--brown-dark); }
 
-        /* ===== TABLE ===== */
-        .table-wrap {
-            overflow-x: auto;
+        /* ===== GUEST CARDS (replaces table for max compatibility) ===== */
+        .guests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .guest-card {
+            display: flex;
+            align-items: stretch;
+            gap: 16px;
             background: white;
+            border: 1px solid var(--beige);
+            border-left: 4px solid var(--rose);
             border-radius: 8px;
+            padding: 16px 18px;
+            text-decoration: none;
+            color: inherit;
             box-shadow: var(--shadow);
+            transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            min-width: 1050px;
+        .guest-card:hover {
+            background: #faf6ef;
+            transform: translateX(2px);
+            box-shadow: 0 4px 14px rgba(90,45,31,0.12);
+            border-left-color: var(--brown-dark);
         }
-        th, td {
-            padding: 14px 14px;
-            text-align: left;
-            border-bottom: 1px solid #f0e6d6;
-            font-size: 14px;
-            vertical-align: top;
-            line-height: 1.4;
-        }
-        th {
+        .guest-card.search-hidden { display: none; }
+        .gc-num {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             background: var(--brown);
             color: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
-            text-transform: uppercase;
+            font-size: 16px;
+            font-family: 'Georgia', serif;
+            align-self: center;
+        }
+        .gc-main {
+            flex: 1;
+            min-width: 0;
+        }
+        .gc-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--brown-dark);
+            margin-bottom: 2px;
+        }
+        .gc-companion {
+            font-size: 14px;
+            color: var(--rose);
+            margin-bottom: 8px;
+        }
+        .gc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 6px 0;
+        }
+        .gc-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            background: var(--cream);
+            color: var(--brown-dark);
+            font-weight: 600;
+        }
+        .gc-pill.people { background: #e8e2d4; }
+        .gc-pill.kids { background: #fff2dc; color: #8b6b2c; }
+        .gc-pill.meal-standard { background: #fff2dc; color: #8b6b2c; }
+        .gc-pill.meal-vegetarian { background: #e3f3d8; color: #4a7026; }
+        .gc-pill.phone {
+            background: #f0e6d6;
+            font-family: 'Menlo', monospace;
             font-size: 11px;
-            letter-spacing: 1px;
-            position: sticky;
-            top: 56px;
-            z-index: 5;
+        }
+        .gc-message {
+            margin-top: 6px;
+            font-style: italic;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .gc-time {
+            font-size: 11px;
+            color: #b0a594;
+            margin-top: 6px;
+        }
+        .gc-edit-hint {
+            flex-shrink: 0;
+            align-self: center;
+            font-size: 13px;
+            color: var(--gold);
+            font-weight: bold;
             white-space: nowrap;
         }
-        /* AGGRESSIVE defensive rules — guarantee rows are visible no matter
-           what CSS conflict, browser quirk, or cache is in play. */
-        tr.row {
-            cursor: pointer;
-            transition: background 0.12s;
-            display: table-row !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        tr.row td {
-            display: table-cell !important;
-            visibility: visible !important;
-            min-height: 50px;
-            color: var(--brown-dark) !important;
-            background: #fff;
-        }
-        tr.row:hover td { background: #faf6ef !important; }
-        tr:last-child td { border-bottom: none; }
-        /* Only the search filter can hide rows; only when the user types */
-        tr.row.search-hidden { display: none !important; }
-        .col-num {
-            text-align: center;
-            color: var(--brown);
-            font-weight: bold;
-            width: 40px;
-            font-size: 13px;
-        }
-        thead .col-num {
-            color: var(--cream);
-            opacity: 0.85;
+        @media (max-width: 600px) {
+            .guest-card { flex-wrap: wrap; padding: 14px; }
+            .gc-edit-hint { width: 100%; text-align: right; margin-top: 8px; }
         }
         .row-hint {
             text-align: center;
@@ -626,63 +667,44 @@
             <div class="row-count">Showing <strong id="visibleCount">{{ attending_rows|length }}</strong> of {{ attending_rows|length }} attending</div>
         </div>
 
-        <!-- ATTENDING GUESTS TABLE (numbered 1..N) -->
+        <!-- ATTENDING GUESTS — rebuilt as cards (much more robust than a table) -->
         {% if attending_rows %}
         <h2 class="section-title">✅ Attending Guests <span class="section-count">({{ attending_rows|length }})</span></h2>
-        <div class="table-wrap">
-            <table id="rsvpTable">
-                <thead>
-                    <tr>
-                        <th class="col-num">#</th>
-                        <th>Name</th>
-                        <th>People</th>
-                        <th>Children Under 5</th>
-                        <th>Phone</th>
-                        <th>Meal</th>
-                        <th>Message</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in attending_rows %}
-                    <tr class="row"
-                        data-search="{{ (r.full_name + ' ' + (r.additional_names or '') + ' ' + r.phone + ' ' + r.message + ' ' + r.meal_preference) | lower }}"
-                        onclick="window.location.href='{{ url_for('edit', row_id=r.id) }}'">
-                        <td class="col-num">{{ loop.index }}</td>
-                        <td class="name-cell">
-                            <strong>{{ r.full_name }}</strong>
-                            <span class="ts">{{ r.submitted_at }}</span>
-                            {% if r.additional_names %}
-                                <span class="with">
-                                    <span class="with-label">+ Coming with</span>
-                                    {{ r.additional_names }}
-                                </span>
-                            {% endif %}
-                        </td>
-                        <td class="num-cell {% if (r.number_of_guests or '0') == '0' %}zero{% endif %}">
-                            {{ r.number_of_guests or 0 }}
-                        </td>
-                        <td class="num-cell {% if (r.children_under_5 or '0') == '0' %}zero{% endif %}">
-                            {{ r.children_under_5 or 0 }}
-                        </td>
-                        <td class="phone-cell">{{ r.phone or '—' }}</td>
-                        <td>
-                            {% if r.meal_preference %}
-                                <span class="meal-tag {{ r.meal_preference }}">
-                                    {% if r.meal_preference == 'standard' %}🍴 Standard{% elif r.meal_preference == 'vegetarian' %}🥬 Vegetarian{% else %}{{ r.meal_preference }}{% endif %}
-                                </span>
-                            {% else %}
-                                <span class="empty">—</span>
-                            {% endif %}
-                        </td>
-                        <td class="message-cell">
-                            {% if r.message %}"{{ r.message }}"{% else %}<span class="empty">—</span>{% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="guests-list" id="guestsList">
+            {% for r in attending_rows %}
+            <a class="guest-card"
+               href="{{ url_for('edit', row_id=r.id) }}"
+               data-search="{{ (r.full_name + ' ' + (r.additional_names or '') + ' ' + r.phone + ' ' + r.message + ' ' + r.meal_preference) | lower }}">
+                <div class="gc-num">{{ loop.index }}</div>
+                <div class="gc-main">
+                    <div class="gc-name">{{ r.full_name }}</div>
+                    {% if r.additional_names %}
+                    <div class="gc-companion">+ {{ r.additional_names }}</div>
+                    {% endif %}
+                    <div class="gc-meta">
+                        <span class="gc-pill people">👥 {{ r.number_of_guests or 0 }} {{ 'person' if (r.number_of_guests or '0') == '1' else 'people' }}</span>
+                        {% if (r.children_under_5 or '0') != '0' %}
+                        <span class="gc-pill kids">🧒 {{ r.children_under_5 }} {{ 'child' if r.children_under_5 == '1' else 'children' }} under 5</span>
+                        {% endif %}
+                        {% if r.meal_preference %}
+                        <span class="gc-pill meal-{{ r.meal_preference }}">
+                            {% if r.meal_preference == 'standard' %}🍴 Standard{% elif r.meal_preference == 'vegetarian' %}🥬 Vegetarian{% else %}{{ r.meal_preference }}{% endif %}
+                        </span>
+                        {% endif %}
+                        {% if r.phone %}
+                        <span class="gc-pill phone">📞 {{ r.phone }}</span>
+                        {% endif %}
+                    </div>
+                    {% if r.message %}
+                    <div class="gc-message">💬 "{{ r.message }}"</div>
+                    {% endif %}
+                    <div class="gc-time">Submitted {{ r.submitted_at }}</div>
+                </div>
+                <div class="gc-edit-hint">✏️ Edit →</div>
+            </a>
+            {% endfor %}
         </div>
-        <div class="row-hint">💡 Click any row to edit or delete that submission.</div>
+        <div class="row-hint">💡 Click any card to edit or delete that submission.</div>
         {% endif %}
 
         <!-- DECLINED LIST (separate section, never counted) -->
@@ -713,27 +735,22 @@
 </div>
 
 <script>
-    // Live search across the attending table only.
+    // Live search across the guest cards.
     const searchBox = document.getElementById('searchBox');
-    const rows = document.querySelectorAll('#rsvpTable tbody tr');
+    const cards = document.querySelectorAll('#guestsList .guest-card');
     const visibleCount = document.getElementById('visibleCount');
 
-    // Defensive: on page load, force-clear the search box (in case a browser
-    // autofills it) and make sure no row is hidden. Without this, autofill
-    // could silently filter the table to "no matches" on first paint.
+    // Defensive: clear any autofilled value and ensure all cards are visible on load.
     if (searchBox) searchBox.value = '';
-    rows.forEach(row => {
-        row.classList.remove('search-hidden');
-        row.classList.remove('hidden');   // legacy class name, scrub it too
-    });
-    if (visibleCount) visibleCount.textContent = rows.length;
+    cards.forEach(c => c.classList.remove('search-hidden'));
+    if (visibleCount) visibleCount.textContent = cards.length;
 
     function applySearch() {
         const q = (searchBox?.value || '').trim().toLowerCase();
         let visible = 0;
-        rows.forEach(row => {
-            const show = !q || (row.dataset.search || '').includes(q);
-            row.classList.toggle('search-hidden', !show);
+        cards.forEach(card => {
+            const show = !q || (card.dataset.search || '').includes(q);
+            card.classList.toggle('search-hidden', !show);
             if (show) visible++;
         });
         if (visibleCount) visibleCount.textContent = visible;
