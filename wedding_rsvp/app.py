@@ -89,7 +89,6 @@ CSV_HEADERS = [
     "number_of_guests",
     "children_under_5",
     "meal_preference",
-    "dietary_restrictions",
     "message",
 ]
 
@@ -101,7 +100,6 @@ EDITABLE_FIELDS = [
     "number_of_guests",
     "children_under_5",
     "meal_preference",
-    "dietary_restrictions",
     "message",
 ]
 
@@ -238,36 +236,6 @@ def compute_totals(rows: list[dict]) -> dict:
         else:
             meal_breakdown["unspecified"] += n
 
-    # ---- Dietary restrictions breakdown ----
-    # Group attending parties by their dietary text (case-insensitive).
-    # Empty / "none" / "no" treated as "No restrictions".
-    no_restriction_keywords = {"", "none", "no", "n/a", "na", "brak"}
-    dietary_counts: dict[str, int] = {}
-    parties_with_restrictions = 0
-    people_with_restrictions = 0
-    for r in attending:
-        n = _to_int(r.get("number_of_guests"), 1)
-        raw = (r.get("dietary_restrictions") or "").strip()
-        key = raw.lower()
-        if key in no_restriction_keywords:
-            dietary_counts.setdefault("No restrictions", 0)
-            dietary_counts["No restrictions"] += n
-        else:
-            # Preserve original casing for display
-            display = raw[:1].upper() + raw[1:] if raw else raw
-            dietary_counts.setdefault(display, 0)
-            dietary_counts[display] += n
-            parties_with_restrictions += 1
-            people_with_restrictions += n
-
-    # Sort: actual restrictions first (by count desc), "No restrictions" last
-    dietary_sorted = sorted(
-        [(k, v) for k, v in dietary_counts.items() if k != "No restrictions"],
-        key=lambda kv: (-kv[1], kv[0]),
-    )
-    if "No restrictions" in dietary_counts:
-        dietary_sorted.append(("No restrictions", dietary_counts["No restrictions"]))
-
     return {
         "total_responses": len(rows),
         "attending_responses": len(attending),
@@ -277,34 +245,40 @@ def compute_totals(rows: list[dict]) -> dict:
         "meal_standard": meal_breakdown["standard"],
         "meal_vegetarian": meal_breakdown["vegetarian"],
         "meal_unspecified": meal_breakdown["unspecified"],
-        "dietary_breakdown": dietary_sorted,
-        "parties_with_restrictions": parties_with_restrictions,
-        "people_with_restrictions": people_with_restrictions,
     }
 
 
 def _form_to_data(form) -> dict:
+    """Derive the headcount from the structured fields:
+        - attending=yes  → submitter counts as 1
+        - +1 companion (additional_names filled in) → +1
+        - children under 5 → + that number
+        - attending=no    → all counts forced to 0
+    The form no longer asks for a manual "# people" — it's computed.
+    """
     attending = form.get("attending", "no")
-    # Enforce data integrity:
-    #   - attending=yes  →  number_of_guests is at least 1 (you, the submitter!)
-    #   - attending=no   →  both counts forced to 0
+    additional_names = form.get("additional_names", "").strip()
+    bringing_kids = form.get("bringing_kids") == "yes"
+
     if attending == "yes":
-        raw_guests = _to_int(form.get("number_of_guests", "1"), 1)
-        num_guests = str(max(1, raw_guests))
-        num_kids = str(max(0, _to_int(form.get("children_under_5", "0"), 0)))
+        kids = max(0, _to_int(form.get("children_under_5", "0"), 0)) if bringing_kids else 0
+        total = 1 + (1 if additional_names else 0) + kids
+        num_guests = str(total)
+        num_kids = str(kids)
     else:
         num_guests = "0"
         num_kids = "0"
+        additional_names = ""  # clear companion name when declining
+
     return {
         "language": form.get("language", "en"),
         "full_name": form.get("full_name", "").strip(),
-        "additional_names": form.get("additional_names", "").strip(),
+        "additional_names": additional_names,
         "phone": form.get("phone", "").strip(),
         "attending": attending,
         "number_of_guests": num_guests,
         "children_under_5": num_kids,
         "meal_preference": form.get("meal_preference", "").strip(),
-        "dietary_restrictions": form.get("dietary_restrictions", "").strip(),
         "message": form.get("message", "").strip(),
     }
 
@@ -325,9 +299,9 @@ def send_notification_email(data: dict, edited: bool = False) -> None:
         f"Attending: {attending}",
         f"Number of guests: {data.get('number_of_guests', '')}",
         f"Children under 5: {data.get('children_under_5', '')}",
+        f"Companion: {data.get('additional_names') or '—'}",
         f"Phone: {data.get('phone') or '—'}",
         f"Meal preference: {data.get('meal_preference') or '—'}",
-        f"Dietary restrictions: {data.get('dietary_restrictions') or '—'}",
         f"Message: {data.get('message') or '—'}",
         "",
         f"Language: {data.get('language', 'en')}",

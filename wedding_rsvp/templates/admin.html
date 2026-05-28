@@ -586,56 +586,26 @@
             <div class="num">{{ totals.total_responses }}</div>
             <div class="label">Total Responses</div>
         </div>
-        <div class="stat">
-            <div class="num">{{ totals.people_with_restrictions }}</div>
-            <div class="label">With Dietary Needs</div>
-        </div>
     </div>
 
-    <!-- TWO-CARD ROW: MEAL + DIETARY -->
+    <!-- MEAL BREAKDOWN -->
     {% if totals.total_guests > 0 %}
-    <div class="breakdown-row">
-        <!-- MEAL BREAKDOWN -->
-        <div class="meal-card">
-            <h3>🍽️ Meal Preferences <span class="card-sub">({{ totals.total_guests }} attending)</span></h3>
-            <div class="meal-bars">
-                {% set max_meal = [totals.meal_standard, totals.meal_vegetarian, totals.meal_unspecified] | max %}
-                <div class="meal-bar">
-                    <div class="top"><span>Standard menu</span><span class="count">{{ totals.meal_standard }}</span></div>
-                    <div class="progress"><div style="width: {{ (totals.meal_standard / max_meal * 100) if max_meal else 0 }}%"></div></div>
-                </div>
-                <div class="meal-bar">
-                    <div class="top"><span>Vegetarian</span><span class="count">{{ totals.meal_vegetarian }}</span></div>
-                    <div class="progress"><div style="width: {{ (totals.meal_vegetarian / max_meal * 100) if max_meal else 0 }}%"></div></div>
-                </div>
-                <div class="meal-bar">
-                    <div class="top"><span>Not specified</span><span class="count">{{ totals.meal_unspecified }}</span></div>
-                    <div class="progress"><div style="width: {{ (totals.meal_unspecified / max_meal * 100) if max_meal else 0 }}%"></div></div>
-                </div>
+    <div class="meal-card" style="margin-bottom: 25px;">
+        <h3>🍽️ Meal Preferences <span class="card-sub">({{ totals.total_guests }} attending)</span></h3>
+        <div class="meal-bars">
+            {% set max_meal = [totals.meal_standard, totals.meal_vegetarian, totals.meal_unspecified] | max %}
+            <div class="meal-bar">
+                <div class="top"><span>Standard menu</span><span class="count">{{ totals.meal_standard }}</span></div>
+                <div class="progress"><div style="width: {{ (totals.meal_standard / max_meal * 100) if max_meal else 0 }}%"></div></div>
             </div>
-        </div>
-
-        <!-- DIETARY BREAKDOWN -->
-        <div class="meal-card">
-            <h3>🥗 Allergies &amp; Dietary Restrictions
-                <span class="card-sub">({{ totals.people_with_restrictions }} {{ 'person' if totals.people_with_restrictions == 1 else 'people' }} need special care)</span>
-            </h3>
-            {% if totals.dietary_breakdown %}
-                {% set max_diet = totals.dietary_breakdown | map(attribute=1) | max %}
-                <div class="meal-bars">
-                    {% for label, count in totals.dietary_breakdown %}
-                    <div class="meal-bar {% if label == 'No restrictions' %}neutral{% else %}alert{% endif %}">
-                        <div class="top">
-                            <span>{% if label != 'No restrictions' %}⚠️ {% endif %}{{ label }}</span>
-                            <span class="count">{{ count }}</span>
-                        </div>
-                        <div class="progress"><div style="width: {{ (count / max_diet * 100) if max_diet else 0 }}%"></div></div>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="card-empty">No dietary info yet.</p>
-            {% endif %}
+            <div class="meal-bar">
+                <div class="top"><span>Vegetarian</span><span class="count">{{ totals.meal_vegetarian }}</span></div>
+                <div class="progress"><div style="width: {{ (totals.meal_vegetarian / max_meal * 100) if max_meal else 0 }}%"></div></div>
+            </div>
+            <div class="meal-bar">
+                <div class="top"><span>Not specified</span><span class="count">{{ totals.meal_unspecified }}</span></div>
+                <div class="progress"><div style="width: {{ (totals.meal_unspecified / max_meal * 100) if max_meal else 0 }}%"></div></div>
+            </div>
         </div>
     </div>
     {% endif %}
@@ -660,14 +630,13 @@
                         <th>Children Under 5</th>
                         <th>Phone</th>
                         <th>Meal</th>
-                        <th>Dietary</th>
                         <th>Message</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for r in attending_rows %}
                     <tr class="row"
-                        data-search="{{ (r.full_name + ' ' + (r.additional_names or '') + ' ' + r.phone + ' ' + r.message + ' ' + r.dietary_restrictions + ' ' + r.meal_preference) | lower }}"
+                        data-search="{{ (r.full_name + ' ' + (r.additional_names or '') + ' ' + r.phone + ' ' + r.message + ' ' + r.meal_preference) | lower }}"
                         onclick="window.location.href='{{ url_for('edit', row_id=r.id) }}'">
                         <td class="col-num">{{ loop.index }}</td>
                         <td class="name-cell">
@@ -694,13 +663,6 @@
                                 </span>
                             {% else %}
                                 <span class="empty">—</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if r.dietary_restrictions %}
-                                <span class="dietary-cell has-need">⚠️ {{ r.dietary_restrictions }}</span>
-                            {% else %}
-                                <span class="dietary-cell"><span class="empty">none</span></span>
                             {% endif %}
                         </td>
                         <td class="message-cell">

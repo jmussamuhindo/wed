@@ -136,6 +136,78 @@
             border-color: var(--rose);
         }
         .required { color: var(--rose); }
+
+        /* Card-style checkbox blocks for the headcount section */
+        #headcount_block { margin-top: 8px; }
+        .confirm-card {
+            border: 2px solid var(--beige);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin: 10px 0;
+            background: #fff;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .confirm-card:has(input[type=checkbox]:checked:not(:disabled)) {
+            border-color: var(--rose);
+            background: #fcf6f3;
+        }
+        .confirm-card.self {
+            background: var(--cream);
+            border-color: var(--gold);
+        }
+        .confirm-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-weight: normal;
+            margin: 0;
+        }
+        .confirm-card.self .confirm-row { cursor: default; }
+        .confirm-row input[type=checkbox] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--rose);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .confirm-row input[type=checkbox]:disabled {
+            accent-color: var(--gold);
+            cursor: default;
+        }
+        .confirm-text strong {
+            display: block;
+            color: var(--brown-dark);
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .confirm-text .muted {
+            color: #999;
+            font-size: 12px;
+            margin-top: 2px;
+            display: block;
+        }
+        .confirm-extra {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--beige);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .confirm-extra input { flex: 1; }
+        .confirm-extra input[type=number] { max-width: 100px; flex: 0 0 auto; }
+        .inline-label {
+            font-weight: bold;
+            color: var(--brown-dark);
+            font-size: 13px;
+            margin: 0;
+            white-space: nowrap;
+        }
+        #headcount_block.declining {
+            opacity: 0.4;
+            pointer-events: none;
+        }
         .submit-btn {
             display: block;
             width: 100%;
@@ -245,30 +317,69 @@
             </label>
         </div>
 
-        <!-- Guest count -->
-        <label for="number_of_guests">
-            <span data-lang="en">How many people on your side will attend the wedding? <span class="required">*</span></span>
-            <span data-lang="pl">Ile osób z Twojej strony weźmie udział w ślubie? <span class="required">*</span></span>
-        </label>
-        <input type="number" id="number_of_guests" name="number_of_guests" min="1" max="20" value="1">
-        <div class="hint" style="margin-top:4px;font-size:12px;color:#888;">
-            <span data-lang="en">Include yourself in the count.</span>
-            <span data-lang="pl">Wlicz siebie w tę liczbę.</span>
+        <!-- Headcount section — only shown when 'Yes' is selected -->
+        <div id="headcount_block">
+
+            <!-- Self confirmation: every attending submission counts as 1 person -->
+            <div class="confirm-card self">
+                <label class="confirm-row">
+                    <input type="checkbox" id="self_attending" checked disabled>
+                    <span class="confirm-text">
+                        <strong>
+                            <span data-lang="en">I will attend</span>
+                            <span data-lang="pl">Wezmę udział</span>
+                        </strong>
+                        <span class="muted">
+                            <span data-lang="en">(counts as 1 person)</span>
+                            <span data-lang="pl">(liczy się jako 1 osoba)</span>
+                        </span>
+                    </span>
+                </label>
+            </div>
+
+            <!-- Optional +1 companion -->
+            <div class="confirm-card">
+                <label class="confirm-row">
+                    <input type="checkbox" id="has_companion">
+                    <span class="confirm-text">
+                        <strong>
+                            <span data-lang="en">I'm bringing a partner / +1</span>
+                            <span data-lang="pl">Przyjdę z osobą towarzyszącą</span>
+                        </strong>
+                    </span>
+                </label>
+                <div class="confirm-extra" id="companion_extra" hidden>
+                    <label class="inline-label" for="additional_names">
+                        <span data-lang="en">Their name</span>
+                        <span data-lang="pl">Imię</span>
+                    </label>
+                    <input type="text" id="additional_names" name="additional_names"
+                           placeholder="e.g. Anna Smith">
+                </div>
+            </div>
+
+            <!-- Optional children under 5 -->
+            <div class="confirm-card">
+                <label class="confirm-row">
+                    <input type="checkbox" id="has_kids" name="bringing_kids" value="yes">
+                    <span class="confirm-text">
+                        <strong>
+                            <span data-lang="en">I'm bringing children under 5 years old</span>
+                            <span data-lang="pl">Przyjdę z dziećmi poniżej 5 lat</span>
+                        </strong>
+                    </span>
+                </label>
+                <div class="confirm-extra" id="kids_extra" hidden>
+                    <label class="inline-label" for="children_under_5">
+                        <span data-lang="en">How many?</span>
+                        <span data-lang="pl">Ile?</span>
+                    </label>
+                    <input type="number" id="children_under_5" name="children_under_5"
+                           min="1" max="20" value="1">
+                </div>
+            </div>
+
         </div>
-
-        <!-- Children under 5 -->
-        <label for="children_under_5">
-            <span data-lang="en">How many children under 5 years old?</span>
-            <span data-lang="pl">Ile dzieci poniżej 5 roku życia?</span>
-        </label>
-        <input type="number" id="children_under_5" name="children_under_5" min="0" max="20" value="0">
-
-        <!-- Name of companion (single +1) -->
-        <label for="additional_names">
-            <span data-lang="en">Name of person coming with you <span style="font-weight:normal;color:#999;">(optional)</span></span>
-            <span data-lang="pl">Imię osoby, która Ci towarzyszy <span style="font-weight:normal;color:#999;">(opcjonalnie)</span></span>
-        </label>
-        <input type="text" id="additional_names" name="additional_names" placeholder="e.g. Anna Smith">
 
         <hr class="divider">
 
@@ -282,14 +393,6 @@
             <option value="standard" data-en="Standard menu" data-pl="Menu standardowe">Standard menu</option>
             <option value="vegetarian" data-en="Vegetarian" data-pl="Wegetariańskie">Vegetarian</option>
         </select>
-
-        <!-- Dietary restrictions -->
-        <label for="dietary_restrictions">
-            <span data-lang="en">Allergies or dietary restrictions</span>
-            <span data-lang="pl">Alergie lub ograniczenia dietetyczne</span>
-        </label>
-        <input type="text" id="dietary_restrictions" name="dietary_restrictions"
-               placeholder="e.g. peanut allergy, lactose intolerance">
 
         <!-- Special message -->
         <label for="message">
@@ -308,20 +411,35 @@
 </div>
 
 <script>
-    // Disable the count fields when declining (counts forced to 0 server-side).
-    // Re-enable when attending so the guest picks at least 1.
+    // === Headcount UI: checkbox toggles and attending state ===
+    const headcountBlock = document.getElementById('headcount_block');
+    const hasCompanion = document.getElementById('has_companion');
+    const companionExtra = document.getElementById('companion_extra');
+    const additionalNames = document.getElementById('additional_names');
+    const hasKids = document.getElementById('has_kids');
+    const kidsExtra = document.getElementById('kids_extra');
+    const childrenInput = document.getElementById('children_under_5');
+
+    function toggleCompanion() {
+        const checked = hasCompanion.checked;
+        companionExtra.hidden = !checked;
+        if (!checked) additionalNames.value = '';
+        else setTimeout(() => additionalNames.focus(), 50);
+    }
+    function toggleKids() {
+        const checked = hasKids.checked;
+        kidsExtra.hidden = !checked;
+        if (!checked) childrenInput.value = 1;
+        else setTimeout(() => childrenInput.select(), 50);
+    }
+    hasCompanion?.addEventListener('change', toggleCompanion);
+    hasKids?.addEventListener('change', toggleKids);
+
+    // When the user picks 'No', grey out the whole headcount section.
     document.querySelectorAll('input[name="attending"]').forEach(radio => {
         radio.addEventListener('change', () => {
-            const numField = document.getElementById('number_of_guests');
-            const kidsField = document.getElementById('children_under_5');
             const declining = (radio.value === 'no' && radio.checked);
-            if (numField) {
-                numField.disabled = declining;
-                if (!declining && (!numField.value || parseInt(numField.value, 10) < 1)) {
-                    numField.value = 1;
-                }
-            }
-            if (kidsField) kidsField.disabled = declining;
+            headcountBlock?.classList.toggle('declining', declining);
         });
     });
 

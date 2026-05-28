@@ -148,6 +148,49 @@
             font-size: 13px;
         }
         .delete-action:hover { background: #fae2e2; border-color: #a14040; }
+        /* Headcount card-style checkboxes (same look as the guest form) */
+        .confirm-card {
+            border: 2px solid var(--beige);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin: 10px 0;
+            background: #fff;
+        }
+        .confirm-card:has(input[type=checkbox]:checked:not(:disabled)) {
+            border-color: var(--rose);
+            background: #fcf6f3;
+        }
+        .confirm-card.self { background: var(--cream); border-color: var(--gold); }
+        .confirm-row {
+            display: flex; align-items: center; gap: 12px;
+            cursor: pointer; font-weight: normal; margin: 0;
+        }
+        .confirm-card.self .confirm-row { cursor: default; }
+        .confirm-row input[type=checkbox] {
+            width: 20px; height: 20px;
+            accent-color: var(--rose); cursor: pointer; flex-shrink: 0;
+        }
+        .confirm-row input[type=checkbox]:disabled {
+            accent-color: var(--gold); cursor: default;
+        }
+        .confirm-text strong {
+            display: block; color: var(--brown-dark);
+            font-size: 15px; font-weight: 600;
+        }
+        .confirm-text .muted {
+            color: #999; font-size: 12px; margin-top: 2px; display: block;
+        }
+        .confirm-extra {
+            margin-top: 12px; padding-top: 12px;
+            border-top: 1px dashed var(--beige);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .confirm-extra input { flex: 1; }
+        .confirm-extra input[type=number] { max-width: 100px; flex: 0 0 auto; }
+        .inline-label {
+            font-weight: bold; color: var(--brown-dark);
+            font-size: 13px; margin: 0; white-space: nowrap;
+        }
         .divider {
             border: none;
             border-top: 2px dashed var(--gold);
@@ -194,19 +237,46 @@
             </label>
         </div>
 
-        <label for="number_of_guests">How many people on your side will attend the wedding? <span class="required">*</span>
-            <span style="font-weight:normal;color:#999;font-size:12px;">(include yourself; 0 only if not attending)</span>
-        </label>
-        <input type="number" id="number_of_guests" name="number_of_guests"
-               min="0" max="20" value="{{ row.number_of_guests if row.number_of_guests is not none else 1 }}">
+        {% set has_companion = (row.additional_names or '')|trim != '' %}
+        {% set num_kids = row.children_under_5|int if row.children_under_5 else 0 %}
+        {% set has_kids = num_kids > 0 %}
 
-        <label for="children_under_5">How many children under 5 years old?</label>
-        <input type="number" id="children_under_5" name="children_under_5"
-               min="0" max="20" value="{{ row.children_under_5 or 0 }}">
+        <!-- I will attend (always 1 when yes) -->
+        <div class="confirm-card self">
+            <label class="confirm-row">
+                <input type="checkbox" checked disabled>
+                <span class="confirm-text">
+                    <strong>I will attend</strong>
+                    <span class="muted">(counts as 1 person)</span>
+                </span>
+            </label>
+        </div>
 
-        <label for="additional_names">Name of person coming with you <span style="font-weight:normal;color:#999;">(optional)</span></label>
-        <input type="text" id="additional_names" name="additional_names"
-               value="{{ row.additional_names or '' }}" placeholder="e.g. Anna Smith">
+        <!-- Companion -->
+        <div class="confirm-card">
+            <label class="confirm-row">
+                <input type="checkbox" id="has_companion" {% if has_companion %}checked{% endif %}>
+                <span class="confirm-text"><strong>Bringing a partner / +1</strong></span>
+            </label>
+            <div class="confirm-extra" id="companion_extra" {% if not has_companion %}hidden{% endif %}>
+                <label class="inline-label" for="additional_names">Their name</label>
+                <input type="text" id="additional_names" name="additional_names"
+                       value="{{ row.additional_names or '' }}" placeholder="e.g. Anna Smith">
+            </div>
+        </div>
+
+        <!-- Children under 5 -->
+        <div class="confirm-card">
+            <label class="confirm-row">
+                <input type="checkbox" id="has_kids" name="bringing_kids" value="yes" {% if has_kids %}checked{% endif %}>
+                <span class="confirm-text"><strong>Bringing children under 5 years old</strong></span>
+            </label>
+            <div class="confirm-extra" id="kids_extra" {% if not has_kids %}hidden{% endif %}>
+                <label class="inline-label" for="children_under_5">How many?</label>
+                <input type="number" id="children_under_5" name="children_under_5"
+                       min="1" max="20" value="{{ num_kids if has_kids else 1 }}">
+            </div>
+        </div>
 
         <hr class="divider">
 
@@ -216,11 +286,6 @@
             <option value="standard" {% if row.meal_preference == 'standard' %}selected{% endif %}>Standard menu</option>
             <option value="vegetarian" {% if row.meal_preference == 'vegetarian' %}selected{% endif %}>Vegetarian</option>
         </select>
-
-        <label for="dietary_restrictions">Allergies or dietary restrictions</label>
-        <input type="text" id="dietary_restrictions" name="dietary_restrictions"
-               value="{{ row.dietary_restrictions }}"
-               placeholder="e.g. peanut allergy, lactose intolerance">
 
         <label for="message">A special message or wish for the couple 💐</label>
         <textarea id="message" name="message" rows="4">{{ row.message }}</textarea>
@@ -239,6 +304,23 @@
     </form>
     {% endif %}
 </div>
+
+<script>
+    const hc = document.getElementById('has_companion');
+    const ce = document.getElementById('companion_extra');
+    const an = document.getElementById('additional_names');
+    const hk = document.getElementById('has_kids');
+    const ke = document.getElementById('kids_extra');
+    const cu = document.getElementById('children_under_5');
+    hc?.addEventListener('change', () => {
+        ce.hidden = !hc.checked;
+        if (!hc.checked) an.value = '';
+    });
+    hk?.addEventListener('change', () => {
+        ke.hidden = !hk.checked;
+        if (!hk.checked) cu.value = 1;
+    });
+</script>
 
 </body>
 </html>
