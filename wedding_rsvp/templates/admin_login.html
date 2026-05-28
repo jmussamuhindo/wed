@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login — Adeline &amp; Mussa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --brown-dark: #5a2d1f;
+            --brown: #6b3e2e;
+            --rose: #b76e79;
+            --gold: #c9a66b;
+            --cream: #f4eee5;
+            --beige: #e6d8c3;
+            --bg: #f8f6f2;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--beige) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            padding: 40px 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(90,45,31,0.15);
+            text-align: center;
+        }
+        .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            color: var(--brown-dark);
+            margin: 0 0 4px;
+            font-size: 24px;
+        }
+        .couple {
+            color: var(--rose);
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .sub {
+            color: var(--brown);
+            font-size: 13px;
+            margin-bottom: 28px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            color: var(--brown-dark);
+            font-size: 13px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        input[type=password] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--beige);
+            border-radius: 6px;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            background: #fafafa;
+        }
+        input[type=password]:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,166,107,0.2);
+            background: white;
+        }
+        button {
+            width: 100%;
+            margin-top: 18px;
+            background: var(--brown);
+            color: var(--cream);
+            border: none;
+            padding: 13px;
+            font-size: 15px;
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            letter-spacing: 1px;
+        }
+        button:hover { background: var(--brown-dark); }
+        .error {
+            background: #fae2e2;
+            border-left: 3px solid #a14040;
+            color: #a14040;
+            padding: 10px 14px;
+            border-radius: 4px;
+            margin-bottom: 18px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .footer {
+            margin-top: 22px;
+            font-size: 13px;
+            color: #999;
+        }
+        .footer a {
+            color: var(--brown);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--beige);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">🔐</div>
+        <h1>Admin Dashboard</h1>
+        <div class="couple">{{ wedding.bride }} &amp; {{ wedding.groom }}</div>
+        <div class="sub">{{ wedding.date_pretty_en }}</div>
+
+        {% if error == 'wrong_password' %}
+            <div class="error">⚠️ Incorrect password. Please try again.</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('admin_login') }}{% if next_url %}?next={{ next_url }}{% endif %}">
+            <input type="hidden" name="next" value="{{ next_url }}">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autofocus required autocomplete="current-password">
+            <button type="submit">Sign In →</button>
+        </form>
+
+        <div class="footer">
+            <a href="/">← Back to confirmation form</a>
+        </div>
+    </div>
+</body>
+</html>

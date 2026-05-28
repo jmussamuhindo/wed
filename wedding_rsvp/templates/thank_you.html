@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation received — Adeline &amp; Mussa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: #f8f6f2;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 600px;
+            background: white;
+            padding: 40px;
+            border: 10px solid #e6d8c3;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 { color: #5a2d1f; font-size: 32px; margin: 0 0 10px; }
+        h2 {
+            color: #b76e79;
+            font-family: 'Brush Script MT', cursive;
+            font-size: 28px;
+            margin: 0 0 25px;
+        }
+        p { color: #6b3e2e; line-height: 1.7; font-size: 16px; }
+        .heart { font-size: 50px; margin: 10px 0; }
+        a.btn {
+            display: inline-block;
+            margin-top: 25px;
+            color: #6b3e2e;
+            text-decoration: none;
+            border: 2px solid #c9a66b;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        a.btn:hover { background: #f4eee5; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="heart">💐</div>
+
+        {% if language == 'pl' %}
+            <h1>{% if edited %}Zaktualizowano, {{ name }}!{% else %}Dziękujemy, {{ name }}!{% endif %}</h1>
+            <h2>{{ wedding.bride }} &amp; {{ wedding.groom }}</h2>
+            {% if edited %}
+                <p>Twoje dane zostały pomyślnie zaktualizowane. ✓</p>
+            {% elif attending %}
+                <p>Z radością witamy Cię na naszym ślubie! 🎉<br>
+                Twoja odpowiedź została zapisana.</p>
+                <p><strong>{{ wedding.date_pretty_pl }}</strong><br>
+                {{ wedding.ceremony_address }}</p>
+            {% else %}
+                <p>Dziękujemy za odpowiedź. Będzie nam Cię brakować! 💔</p>
+            {% endif %}
+            <a class="btn" href="/">← Wstecz</a>
+        {% else %}
+            <h1>{% if edited %}Updated, {{ name }}!{% else %}Thank you, {{ name }}!{% endif %}</h1>
+            <h2>{{ wedding.bride }} &amp; {{ wedding.groom }}</h2>
+            {% if edited %}
+                <p>Your submission has been successfully updated. ✓</p>
+            {% elif attending %}
+                <p>We can't wait to celebrate with you! 🎉<br>
+                Your response has been recorded.</p>
+                <p><strong>{{ wedding.date_pretty_en }}</strong><br>
+                {{ wedding.ceremony_address }}</p>
+            {% else %}
+                <p>Thank you for letting us know. We will miss you! 💔</p>
+            {% endif %}
+            <a class="btn" href="/">← Back</a>
+        {% endif %}
+    </div>
+</body>
+</html>

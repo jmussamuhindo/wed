@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Confirmation — Adeline &amp; Mussa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --brown-dark: #5a2d1f;
+            --brown: #6b3e2e;
+            --rose: #b76e79;
+            --gold: #c9a66b;
+            --cream: #f4eee5;
+            --beige: #e6d8c3;
+            --bg: #f8f6f2;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: var(--bg);
+            color: #333;
+        }
+        .card {
+            width: 95%;
+            max-width: 720px;
+            margin: 30px auto;
+            padding: 35px 40px;
+            background: white;
+            border-top: 4px solid var(--gold);
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: var(--brown-dark);
+            margin: 5px 0 4px;
+            font-size: 26px;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--brown);
+            font-size: 15px;
+            margin: 0 0 18px;
+        }
+        .edit-banner {
+            background: #fff8e1;
+            border-left: 3px solid var(--gold);
+            padding: 12px 15px;
+            margin-bottom: 25px;
+            color: var(--brown-dark);
+            font-size: 14px;
+        }
+        .error {
+            background: #fae2e2;
+            border-left: 3px solid #a14040;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            color: #a14040;
+            font-size: 14px;
+        }
+        form label {
+            display: block;
+            font-weight: bold;
+            color: var(--brown-dark);
+            margin: 15px 0 6px;
+            font-size: 14px;
+        }
+        form input[type=text],
+        form input[type=tel],
+        form input[type=number],
+        form select,
+        form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--beige);
+            border-radius: 4px;
+            font-family: 'Georgia', serif;
+            font-size: 15px;
+            background: #fff;
+        }
+        form input:focus, form select:focus, form textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 4px rgba(201,166,107,0.5);
+        }
+        .radio-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 6px;
+        }
+        .radio-row label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border: 2px solid var(--beige);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: normal;
+            margin: 0;
+        }
+        .radio-row label:has(input:checked) {
+            background: var(--cream);
+            border-color: var(--rose);
+        }
+        .required { color: var(--rose); }
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        .submit-btn {
+            flex: 1;
+            background: var(--brown);
+            color: var(--cream);
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .submit-btn:hover { background: var(--brown-dark); }
+        .cancel-btn {
+            background: white;
+            color: var(--brown);
+            border: 2px solid var(--beige);
+            padding: 12px 20px;
+            font-size: 15px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            border-radius: 6px;
+            font-family: 'Georgia', serif;
+        }
+        .cancel-btn:hover { background: var(--cream); }
+        .delete-action {
+            background: none;
+            color: #a14040;
+            border: 1px solid #f0c8c8;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-size: 13px;
+        }
+        .delete-action:hover { background: #fae2e2; border-color: #a14040; }
+        .divider {
+            border: none;
+            border-top: 2px dashed var(--gold);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Edit Confirmation</h1>
+    <p class="subtitle">{{ wedding.bride }} &amp; {{ wedding.groom }} · {{ wedding.date_pretty_en }}</p>
+
+    <div class="edit-banner">
+        ✏️ You're updating an existing confirmation. Make your changes below and click <strong>Save Changes</strong>.
+    </div>
+
+    {% if error == 'name_required' %}
+        <div class="error">⚠️ Please enter a name.</div>
+    {% elif error == 'name_collision' %}
+        <div class="error">⚠️ Another confirmation already exists with that name. Please use a different name.</div>
+    {% endif %}
+
+    <form action="/edit/{{ row.id }}" method="POST">
+        <input type="hidden" name="language" value="{{ row.language or 'en' }}">
+
+        <label for="full_name">Full name <span class="required">*</span></label>
+        <input type="text" id="full_name" name="full_name" value="{{ row.full_name }}" required>
+
+        <label for="phone">Phone number</label>
+        <input type="tel" id="phone" name="phone" value="{{ row.phone }}" placeholder="+48 ...">
+
+        <hr class="divider">
+
+        <label>Will you attend the wedding? <span class="required">*</span></label>
+        <div class="radio-row">
+            <label>
+                <input type="radio" name="attending" value="yes" {% if row.attending == 'yes' %}checked{% endif %} required>
+                <span>✅ Yes, with joy!</span>
+            </label>
+            <label>
+                <input type="radio" name="attending" value="no" {% if row.attending == 'no' %}checked{% endif %}>
+                <span>😔 Sadly, I cannot</span>
+            </label>
+        </div>
+
+        <label for="number_of_guests">How many people on your side will attend the wedding? <span class="required">*</span>
+            <span style="font-weight:normal;color:#999;font-size:12px;">(include yourself; 0 only if not attending)</span>
+        </label>
+        <input type="number" id="number_of_guests" name="number_of_guests"
+               min="0" max="20" value="{{ row.number_of_guests if row.number_of_guests is not none else 1 }}">
+
+        <label for="children_under_5">How many children under 5 years old?</label>
+        <input type="number" id="children_under_5" name="children_under_5"
+               min="0" max="20" value="{{ row.children_under_5 or 0 }}">
+
+        <label for="additional_names">Name of person coming with you <span style="font-weight:normal;color:#999;">(optional)</span></label>
+        <input type="text" id="additional_names" name="additional_names"
+               value="{{ row.additional_names or '' }}" placeholder="e.g. Anna Smith">
+
+        <hr class="divider">
+
+        <label for="meal_preference">Meal preference</label>
+        <select id="meal_preference" name="meal_preference">
+            <option value="" {% if not row.meal_preference %}selected{% endif %}>—</option>
+            <option value="standard" {% if row.meal_preference == 'standard' %}selected{% endif %}>Standard menu</option>
+            <option value="vegetarian" {% if row.meal_preference == 'vegetarian' %}selected{% endif %}>Vegetarian</option>
+        </select>
+
+        <label for="dietary_restrictions">Allergies or dietary restrictions</label>
+        <input type="text" id="dietary_restrictions" name="dietary_restrictions"
+               value="{{ row.dietary_restrictions }}"
+               placeholder="e.g. peanut allergy, lactose intolerance">
+
+        <label for="message">A special message or wish for the couple 💐</label>
+        <textarea id="message" name="message" rows="4">{{ row.message }}</textarea>
+
+        <div class="actions">
+            <a class="cancel-btn" href="{% if is_admin %}/admin{% else %}/{% endif %}">← Cancel</a>
+            <button type="submit" class="submit-btn">💾 Save Changes</button>
+        </div>
+    </form>
+
+    {% if is_admin %}
+    <form action="{{ url_for('admin_delete', row_id=row.id) }}" method="POST"
+          style="margin-top: 25px; text-align: center;"
+          onsubmit="return confirm('Delete this confirmation for {{ row.full_name }}? This cannot be undone.')">
+        <button type="submit" class="delete-action">🗑 Delete this submission</button>
+    </form>
+    {% endif %}
+</div>
+
+</body>
+</html>

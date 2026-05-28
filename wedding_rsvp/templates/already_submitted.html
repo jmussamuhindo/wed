@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Already submitted — Adeline &amp; Mussa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: #f8f6f2;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 580px;
+            background: white;
+            padding: 40px;
+            border-top: 4px solid #c9a66b;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 { color: #5a2d1f; font-size: 24px; margin: 0 0 10px; }
+        p { color: #6b3e2e; line-height: 1.7; font-size: 16px; }
+        .icon { font-size: 48px; margin: 0 0 10px; }
+        .name { color: #b76e79; font-weight: bold; }
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+        a.btn-primary {
+            background: #6b3e2e;
+            color: #f4eee5;
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        a.btn-primary:hover { background: #5a2d1f; }
+        a.btn-secondary {
+            background: white;
+            color: #6b3e2e;
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: 6px;
+            border: 2px solid #e6d8c3;
+        }
+        a.btn-secondary:hover { background: #f4eee5; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">📝</div>
+        {% if language == 'pl' %}
+            <h1>Twoje dane zostały już przesłane</h1>
+            <p>Wygląda na to, że <span class="name">{{ name }}</span> już potwierdził(a) obecność.</p>
+            <p>Chcesz edytować swoje wcześniejsze zgłoszenie? Kliknij przycisk poniżej.</p>
+            <div class="actions">
+                <a class="btn-primary" href="/edit/{{ edit_id }}">✏️ Edytuj moje dane</a>
+                <a class="btn-secondary" href="/">← Wróć</a>
+            </div>
+        {% else %}
+            <h1>The data has been submitted</h1>
+            <p>It looks like <span class="name">{{ name }}</span> has already confirmed.</p>
+            <p>Want to edit your previous submission? Click the button below.</p>
+            <div class="actions">
+                <a class="btn-primary" href="/edit/{{ edit_id }}">✏️ Edit my submission</a>
+                <a class="btn-secondary" href="/">← Back</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

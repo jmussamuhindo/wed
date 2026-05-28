@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin — Wedding Confirmations</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --brown-dark: #5a2d1f;
+            --brown: #6b3e2e;
+            --rose: #b76e79;
+            --gold: #c9a66b;
+            --cream: #f4eee5;
+            --beige: #e6d8c3;
+            --bg: #f8f6f2;
+            --green: #2d6a2d;
+            --green-bg: #d4f1d4;
+            --red: #a14040;
+            --red-bg: #fae2e2;
+            --shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: var(--bg);
+            color: #333;
+            padding-bottom: 50px;
+        }
+
+        /* ===== TOP NAV ===== */
+        .navbar {
+            background: var(--brown-dark);
+            color: var(--cream);
+            padding: 14px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .navbar .brand {
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        .navbar .brand small {
+            display: block;
+            font-weight: normal;
+            opacity: 0.7;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        .nav-actions { display: flex; gap: 10px; align-items: center; }
+        .nav-actions a {
+            color: var(--cream);
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: background 0.15s;
+        }
+        .nav-actions a:hover { background: rgba(255,255,255,0.1); }
+        .nav-actions a.export { background: var(--gold); color: var(--brown-dark); }
+        .nav-actions a.export:hover { background: #b58e54; }
+        .nav-actions a.logout { border: 1px solid rgba(255,255,255,0.3); }
+
+        /* ===== CONTENT ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
+        h1 {
+            color: var(--brown-dark);
+            text-align: center;
+            margin: 5px 0 4px;
+            font-size: 26px;
+        }
+        .sub {
+            text-align: center;
+            color: var(--brown);
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .sub strong { color: var(--rose); }
+
+        /* ===== HEADLINE STATS ===== */
+        .headline {
+            background: linear-gradient(135deg, var(--brown) 0%, var(--brown-dark) 100%);
+            color: var(--cream);
+            border-radius: 12px;
+            padding: 30px 30px;
+            box-shadow: 0 6px 18px rgba(90,45,31,0.25);
+            margin-bottom: 22px;
+        }
+        .headline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+            align-items: center;
+        }
+        .headline-grid.two-up {
+            grid-template-columns: 1fr 1fr;
+        }
+        @media (max-width: 540px) {
+            .headline-grid.two-up { grid-template-columns: 1fr; }
+        }
+        .big-stat {
+            text-align: center;
+            padding: 8px;
+            border-right: 1px solid rgba(255,255,255,0.12);
+        }
+        .big-stat:last-child { border-right: none; }
+        .big-stat .num {
+            font-size: 56px;
+            font-weight: bold;
+            line-height: 1;
+            margin-bottom: 6px;
+            color: white;
+        }
+        .big-stat.decline .num { color: #f0c0c0; }
+        .big-stat .label {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            opacity: 0.85;
+        }
+        .big-stat .sublabel {
+            font-size: 11px;
+            opacity: 0.55;
+            margin-top: 4px;
+            font-style: italic;
+        }
+        @media (max-width: 600px) {
+            .big-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 18px; }
+            .big-stat:last-child { border-bottom: none; padding-bottom: 8px; }
+            .big-stat .num { font-size: 44px; }
+        }
+
+        /* ===== STAT CARDS ROW ===== */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+        .stat {
+            background: white;
+            border: 1px solid var(--beige);
+            padding: 18px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        .stat .num {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--brown-dark);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .stat .label {
+            font-size: 11px;
+            color: var(--brown);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat.yes .num { color: var(--green); }
+        .stat.no  .num { color: var(--red); }
+
+        /* ===== BREAKDOWN CARDS (meal + dietary side-by-side) ===== */
+        .breakdown-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+        .meal-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px 25px;
+            box-shadow: var(--shadow);
+        }
+        .meal-card h3 {
+            margin: 0 0 14px;
+            color: var(--brown-dark);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .meal-card .card-sub {
+            font-size: 11px;
+            color: #999;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: 0.3px;
+        }
+        .meal-card .card-empty {
+            color: #aaa;
+            font-style: italic;
+            margin: 8px 0 0;
+            font-size: 14px;
+        }
+        .meal-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .meal-bar {
+            padding: 12px 14px;
+            border-radius: 6px;
+            background: var(--cream);
+        }
+        .meal-bar.alert { background: #fff4e5; }
+        .meal-bar.neutral { background: #f0ebe0; }
+        .meal-bar .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--brown);
+        }
+        .meal-bar.alert .top { color: #a05a00; font-weight: 600; }
+        .meal-bar .count {
+            font-weight: bold;
+            color: var(--brown-dark);
+            font-size: 18px;
+        }
+        .meal-bar.alert .count { color: #a05a00; }
+        .meal-bar .progress {
+            height: 6px;
+            background: rgba(0,0,0,0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .meal-bar .progress > div {
+            height: 100%;
+            background: var(--gold);
+        }
+        .meal-bar.alert .progress > div { background: #f0a040; }
+
+        /* ===== TOOLBAR ===== */
+        .toolbar {
+            background: white;
+            padding: 14px 18px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .toolbar input[type=search] {
+            flex: 1;
+            min-width: 200px;
+            padding: 9px 12px;
+            border: 1px solid var(--beige);
+            border-radius: 4px;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+        }
+        .toolbar input[type=search]:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-btn {
+            padding: 7px 14px;
+            border: 1px solid var(--beige);
+            background: white;
+            color: var(--brown);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Georgia', serif;
+        }
+        .filter-btn:hover { background: var(--cream); }
+        .filter-btn.active {
+            background: var(--brown);
+            color: var(--cream);
+            border-color: var(--brown);
+        }
+        .row-count {
+            font-size: 13px;
+            color: var(--brown);
+            white-space: nowrap;
+        }
+        .row-count strong { color: var(--brown-dark); }
+
+        /* ===== TABLE ===== */
+        .table-wrap {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 1050px;
+        }
+        th, td {
+            padding: 14px 14px;
+            text-align: left;
+            border-bottom: 1px solid #f0e6d6;
+            font-size: 14px;
+            vertical-align: top;
+            line-height: 1.4;
+        }
+        th {
+            background: var(--brown);
+            color: var(--cream);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            position: sticky;
+            top: 56px;
+            z-index: 5;
+            white-space: nowrap;
+        }
+        tr.row {
+            cursor: pointer;
+            transition: background 0.12s;
+            display: table-row;        /* defensive: never collapse */
+        }
+        tr.row td {
+            display: table-cell;       /* defensive: ensure cells render */
+            min-height: 40px;
+        }
+        tr.row:hover td { background: #faf6ef; }
+        tr:last-child td { border-bottom: none; }
+        tr.row.hidden { display: none; }
+        .col-num {
+            text-align: center;
+            color: var(--brown);
+            font-weight: bold;
+            width: 40px;
+            font-size: 13px;
+        }
+        thead .col-num {
+            color: var(--cream);
+            opacity: 0.85;
+        }
+        .row-hint {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 14px;
+            margin-bottom: 35px;
+            font-style: italic;
+        }
+        .section-title {
+            color: var(--brown-dark);
+            font-size: 18px;
+            margin: 5px 0 14px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .section-title.declined-title { color: var(--red); }
+        .section-title .section-count {
+            color: #999;
+            font-weight: normal;
+            font-size: 14px;
+        }
+        .declined-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+        .declined-card {
+            background: white;
+            border: 1px solid #f0e6d6;
+            border-left: 3px solid var(--red-bg);
+            border-radius: 6px;
+            padding: 14px 16px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: background 0.12s, border-color 0.12s;
+        }
+        .declined-card:hover {
+            background: #fdf6f6;
+            border-left-color: var(--red);
+        }
+        .declined-name {
+            color: var(--brown-dark);
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .declined-meta {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.5;
+        }
+        .declined-meta .ts {
+            color: #bbb;
+            font-size: 11px;
+            margin-left: 6px;
+        }
+        .declined-msg {
+            margin-top: 6px;
+            font-style: italic;
+            color: #666;
+            font-size: 13px;
+        }
+        .name-cell strong {
+            color: var(--brown-dark);
+            font-size: 15px;
+            display: block;
+        }
+        .name-cell .ts {
+            color: #aaa;
+            font-size: 11px;
+            margin-top: 2px;
+            display: block;
+        }
+        .name-cell .with {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--brown);
+            background: var(--cream);
+            padding: 5px 8px;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+        .name-cell .with-label {
+            display: block;
+            color: #999;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 11px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        .badge.yes { background: var(--green-bg); color: var(--green); }
+        .badge.no  { background: var(--red-bg); color: var(--red); }
+        .num-cell {
+            font-weight: bold;
+            color: var(--brown-dark);
+            text-align: center;
+            font-size: 16px;
+        }
+        .num-cell.zero { color: #bbb; font-weight: normal; }
+        .phone-cell {
+            font-family: 'Menlo', monospace;
+            font-size: 13px;
+            color: var(--brown);
+        }
+        .meal-tag {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 4px;
+            font-size: 12px;
+            background: var(--cream);
+            color: var(--brown);
+        }
+        .meal-tag.standard { background: #fff2dc; color: #8b6b2c; }
+        .meal-tag.vegetarian { background: #e3f3d8; color: #4a7026; }
+        .dietary-cell {
+            font-size: 13px;
+            color: var(--brown);
+        }
+        .dietary-cell.has-need {
+            background: #fff4e5;
+            color: #a05a00;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .dietary-cell .empty { color: #ccc; }
+        .message-cell {
+            max-width: 280px;
+            color: #555;
+            font-style: italic;
+            white-space: normal;
+        }
+        .message-cell .empty { color: #ccc; font-style: normal; }
+        .actions-cell { white-space: nowrap; }
+        a.edit-btn, button.delete-btn {
+            display: inline-block;
+            padding: 5px 11px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+        }
+        a.edit-btn {
+            background: var(--gold);
+            color: white;
+        }
+        a.edit-btn:hover { background: var(--brown); }
+        button.delete-btn {
+            background: var(--red-bg);
+            color: var(--red);
+            margin-left: 5px;
+        }
+        button.delete-btn:hover { background: var(--red); color: white; }
+
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 8px;
+            color: #aaa;
+            box-shadow: var(--shadow);
+        }
+        .hidden { display: none !important; }
+
+        /* mobile tweaks */
+        @media (max-width: 600px) {
+            .navbar { flex-direction: column; gap: 10px; padding: 12px; }
+            .headline .num { font-size: 48px; }
+            .breakdown { gap: 25px; }
+            th { top: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<nav class="navbar">
+    <div class="brand">
+        💐 Wedding Admin
+        <small>{{ wedding.bride }} &amp; {{ wedding.groom }} · {{ wedding.date_pretty_en }}</small>
+    </div>
+    <div class="nav-actions">
+        <a href="/" target="_blank">↗ View guest form</a>
+        <a href="{{ url_for('admin_export') }}" class="export">⬇ Export CSV</a>
+        <a href="{{ url_for('admin_logout') }}" class="logout">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- HEADLINE: ONLY attending counts (no confusion with declines) -->
+    <div class="headline">
+        <div class="headline-grid two-up">
+            <div class="big-stat">
+                <div class="num">{{ totals.total_guests }}</div>
+                <div class="label">People Attending</div>
+                <div class="sublabel">from {{ totals.attending_responses }} {{ 'family' if totals.attending_responses == 1 else 'families' }}</div>
+            </div>
+            <div class="big-stat">
+                <div class="num">{{ totals.total_children }}</div>
+                <div class="label">Children Under 5</div>
+                <div class="sublabel">included in total above</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECONDARY STATS (declined visible here but not in headline) -->
+    <div class="stat-grid">
+        <div class="stat yes">
+            <div class="num">{{ totals.attending_responses }}</div>
+            <div class="label">Families Attending</div>
+        </div>
+        <div class="stat no">
+            <div class="num">{{ totals.declining_responses }}</div>
+            <div class="label">Declined</div>
+        </div>
+        <div class="stat">
+            <div class="num">{{ totals.total_responses }}</div>
+            <div class="label">Total Responses</div>
+        </div>
+        <div class="stat">
+            <div class="num">{{ totals.people_with_restrictions }}</div>
+            <div class="label">With Dietary Needs</div>
+        </div>
+    </div>
+
+    <!-- TWO-CARD ROW: MEAL + DIETARY -->
+    {% if totals.total_guests > 0 %}
+    <div class="breakdown-row">
+        <!-- MEAL BREAKDOWN -->
+        <div class="meal-card">
+            <h3>🍽️ Meal Preferences <span class="card-sub">({{ totals.total_guests }} attending)</span></h3>
+            <div class="meal-bars">
+                {% set max_meal = [totals.meal_standard, totals.meal_vegetarian, totals.meal_unspecified] | max %}
+                <div class="meal-bar">
+                    <div class="top"><span>Standard menu</span><span class="count">{{ totals.meal_standard }}</span></div>
+                    <div class="progress"><div style="width: {{ (totals.meal_standard / max_meal * 100) if max_meal else 0 }}%"></div></div>
+                </div>
+                <div class="meal-bar">
+                    <div class="top"><span>Vegetarian</span><span class="count">{{ totals.meal_vegetarian }}</span></div>
+                    <div class="progress"><div style="width: {{ (totals.meal_vegetarian / max_meal * 100) if max_meal else 0 }}%"></div></div>
+                </div>
+                <div class="meal-bar">
+                    <div class="top"><span>Not specified</span><span class="count">{{ totals.meal_unspecified }}</span></div>
+                    <div class="progress"><div style="width: {{ (totals.meal_unspecified / max_meal * 100) if max_meal else 0 }}%"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIETARY BREAKDOWN -->
+        <div class="meal-card">
+            <h3>🥗 Allergies &amp; Dietary Restrictions
+                <span class="card-sub">({{ totals.people_with_restrictions }} {{ 'person' if totals.people_with_restrictions == 1 else 'people' }} need special care)</span>
+            </h3>
+            {% if totals.dietary_breakdown %}
+                {% set max_diet = totals.dietary_breakdown | map(attribute=1) | max %}
+                <div class="meal-bars">
+                    {% for label, count in totals.dietary_breakdown %}
+                    <div class="meal-bar {% if label == 'No restrictions' %}neutral{% else %}alert{% endif %}">
+                        <div class="top">
+                            <span>{% if label != 'No restrictions' %}⚠️ {% endif %}{{ label }}</span>
+                            <span class="count">{{ count }}</span>
+                        </div>
+                        <div class="progress"><div style="width: {{ (count / max_diet * 100) if max_diet else 0 }}%"></div></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="card-empty">No dietary info yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if attending_rows or declined_rows %}
+        <!-- TOOLBAR: search only (attending shown by default, declined in separate section below) -->
+        <div class="toolbar">
+            <input type="search" id="searchBox" placeholder="🔍 Search by name, +1, phone, message...">
+            <div class="row-count">Showing <strong id="visibleCount">{{ attending_rows|length }}</strong> of {{ attending_rows|length }} attending</div>
+        </div>
+
+        <!-- ATTENDING GUESTS TABLE (numbered 1..N) -->
+        {% if attending_rows %}
+        <h2 class="section-title">✅ Attending Guests <span class="section-count">({{ attending_rows|length }})</span></h2>
+        <div class="table-wrap">
+            <table id="rsvpTable">
+                <thead>
+                    <tr>
+                        <th class="col-num">#</th>
+                        <th>Name</th>
+                        <th>People</th>
+                        <th>Children Under 5</th>
+                        <th>Phone</th>
+                        <th>Meal</th>
+                        <th>Dietary</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in attending_rows %}
+                    <tr class="row"
+                        data-search="{{ (r.full_name + ' ' + (r.additional_names or '') + ' ' + r.phone + ' ' + r.message + ' ' + r.dietary_restrictions + ' ' + r.meal_preference) | lower }}"
+                        onclick="window.location.href='{{ url_for('edit', row_id=r.id) }}'">
+                        <td class="col-num">{{ loop.index }}</td>
+                        <td class="name-cell">
+                            <strong>{{ r.full_name }}</strong>
+                            <span class="ts">{{ r.submitted_at }}</span>
+                            {% if r.additional_names %}
+                                <span class="with">
+                                    <span class="with-label">+ Coming with</span>
+                                    {{ r.additional_names }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="num-cell {% if (r.number_of_guests or '0') == '0' %}zero{% endif %}">
+                            {{ r.number_of_guests or 0 }}
+                        </td>
+                        <td class="num-cell {% if (r.children_under_5 or '0') == '0' %}zero{% endif %}">
+                            {{ r.children_under_5 or 0 }}
+                        </td>
+                        <td class="phone-cell">{{ r.phone or '—' }}</td>
+                        <td>
+                            {% if r.meal_preference %}
+                                <span class="meal-tag {{ r.meal_preference }}">
+                                    {% if r.meal_preference == 'standard' %}🍴 Standard{% elif r.meal_preference == 'vegetarian' %}🥬 Vegetarian{% else %}{{ r.meal_preference }}{% endif %}
+                                </span>
+                            {% else %}
+                                <span class="empty">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if r.dietary_restrictions %}
+                                <span class="dietary-cell has-need">⚠️ {{ r.dietary_restrictions }}</span>
+                            {% else %}
+                                <span class="dietary-cell"><span class="empty">none</span></span>
+                            {% endif %}
+                        </td>
+                        <td class="message-cell">
+                            {% if r.message %}"{{ r.message }}"{% else %}<span class="empty">—</span>{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="row-hint">💡 Click any row to edit or delete that submission.</div>
+        {% endif %}
+
+        <!-- DECLINED LIST (separate section, never counted) -->
+        {% if declined_rows %}
+        <h2 class="section-title declined-title">
+            ✕ Cannot Attend <span class="section-count">({{ declined_rows|length }})</span>
+        </h2>
+        <div class="declined-list">
+            {% for r in declined_rows %}
+            <a class="declined-card" href="{{ url_for('edit', row_id=r.id) }}">
+                <div class="declined-name">{{ r.full_name }}</div>
+                <div class="declined-meta">
+                    {% if r.phone %}📞 {{ r.phone }}{% endif %}
+                    <span class="ts">{{ r.submitted_at }}</span>
+                    {% if r.message %}<div class="declined-msg">"{{ r.message }}"</div>{% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="empty">
+            <h3>No confirmations yet</h3>
+            <p>Share the guest form link with everyone you invited:</p>
+            <p><code>{{ request.url_root }}</code></p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Live search across the attending table only.
+    const searchBox = document.getElementById('searchBox');
+    const rows = document.querySelectorAll('#rsvpTable tbody tr');
+    const visibleCount = document.getElementById('visibleCount');
+
+    function applySearch() {
+        const q = (searchBox?.value || '').trim().toLowerCase();
+        let visible = 0;
+        rows.forEach(row => {
+            const show = !q || row.dataset.search.includes(q);
+            row.classList.toggle('hidden', !show);
+            if (show) visible++;
+        });
+        if (visibleCount) visibleCount.textContent = visible;
+    }
+
+    searchBox?.addEventListener('input', applySearch);
+</script>
+
+</body>
+</html>

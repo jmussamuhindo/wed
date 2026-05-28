@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wedding Confirmation — Adeline &amp; Mussa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --brown-dark: #5a2d1f;
+            --brown: #6b3e2e;
+            --rose: #b76e79;
+            --gold: #c9a66b;
+            --cream: #f4eee5;
+            --beige: #e6d8c3;
+            --bg: #f8f6f2;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: var(--bg);
+            color: #333;
+        }
+        .card {
+            width: 95%;
+            max-width: 720px;
+            margin: 30px auto;
+            padding: 35px 40px;
+            background: white;
+            border-top: 4px solid var(--rose);
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: var(--brown-dark);
+            margin: 5px 0 4px;
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--brown);
+            font-size: 15px;
+            margin: 0 0 5px;
+        }
+        .couple {
+            text-align: center;
+            color: var(--rose);
+            font-weight: bold;
+            font-size: 17px;
+            margin: 0 0 18px;
+        }
+        .lang-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .lang-toggle button {
+            background: var(--beige);
+            color: var(--brown);
+            border: none;
+            padding: 8px 18px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+        .lang-toggle button.active {
+            background: var(--brown);
+            color: var(--cream);
+        }
+        .event-info {
+            background: var(--cream);
+            padding: 10px 14px;
+            border-left: 3px solid var(--gold);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: var(--brown);
+        }
+        .event-info strong { color: var(--brown-dark); }
+        form label {
+            display: block;
+            font-weight: bold;
+            color: var(--brown-dark);
+            margin: 15px 0 6px;
+            font-size: 14px;
+        }
+        form input[type=text],
+        form input[type=email],
+        form input[type=tel],
+        form input[type=number],
+        form select,
+        form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--beige);
+            border-radius: 4px;
+            font-family: 'Georgia', serif;
+            font-size: 15px;
+            background: #fff;
+        }
+        form input:focus, form select:focus, form textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 4px rgba(201,166,107,0.5);
+        }
+        .radio-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 6px;
+        }
+        .radio-row label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border: 2px solid var(--beige);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: normal;
+            margin: 0;
+            transition: all 0.2s;
+        }
+        .radio-row label:hover { border-color: var(--gold); }
+        .radio-row input[type=radio]:checked + span {
+            color: var(--brown-dark);
+            font-weight: bold;
+        }
+        .radio-row label:has(input:checked) {
+            background: var(--cream);
+            border-color: var(--rose);
+        }
+        .required { color: var(--rose); }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            margin: 30px auto 0;
+            background: var(--brown);
+            color: var(--cream);
+            border: none;
+            padding: 14px 30px;
+            font-size: 17px;
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover { background: var(--brown-dark); }
+        .divider {
+            border: none;
+            border-top: 2px dashed var(--gold);
+            margin: 20px 0;
+        }
+        .hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        /* Hide whichever language is inactive */
+        [data-lang="pl"] { display: none; }
+        body.lang-pl [data-lang="en"] { display: none; }
+        body.lang-pl [data-lang="pl"] { display: inline; }
+        body.lang-pl [data-lang="pl"].block { display: block; }
+        .block { display: block; }
+    </style>
+</head>
+<body class="lang-en">
+
+<div class="card">
+    <!-- Language toggle -->
+    <div class="lang-toggle">
+        <button type="button" id="btn-en" class="active" onclick="setLang('en')">🇬🇧 English</button>
+        <button type="button" id="btn-pl" onclick="setLang('pl')">🇵🇱 Polski</button>
+    </div>
+
+    <!-- Title -->
+    <h1>
+        <span data-lang="en">Wedding Confirmation</span>
+        <span data-lang="pl">Potwierdzenie obecności</span>
+    </h1>
+    <p class="subtitle">
+        <span data-lang="en">Please confirm whether you will attend.</span>
+        <span data-lang="pl">Prosimy o potwierdzenie obecności.</span>
+    </p>
+    <p class="couple">{{ wedding.bride }} &amp; {{ wedding.groom }} · {{ wedding.date_pretty_en }}</p>
+
+    <!-- Brief event reference -->
+    <div class="event-info">
+        <div data-lang="en" class="block">
+            <span data-lang="en">Please reply by <strong>{{ wedding.rsvp_deadline_en }}</strong></span>
+        </div>
+        <div data-lang="pl">
+            <span data-lang="pl">Prosimy o odpowiedź do <strong>{{ wedding.rsvp_deadline_pl }}</strong></span>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Form -->
+    <form action="/submit" method="POST">
+        <input type="hidden" name="language" id="language" value="en">
+
+        <!-- Full name -->
+        <label for="full_name">
+            <span data-lang="en">Full name <span class="required">*</span></span>
+            <span data-lang="pl">Imię i nazwisko <span class="required">*</span></span>
+        </label>
+        <input type="text" id="full_name" name="full_name" required>
+
+        <!-- Phone -->
+        <label for="phone">
+            <span data-lang="en">Phone number</span>
+            <span data-lang="pl">Numer telefonu</span>
+        </label>
+        <input type="tel" id="phone" name="phone" placeholder="+48 ...">
+
+        <hr class="divider">
+
+        <!-- Attending? -->
+        <label>
+            <span data-lang="en">Will you attend the wedding? <span class="required">*</span></span>
+            <span data-lang="pl">Czy weźmiesz udział w ślubie? <span class="required">*</span></span>
+        </label>
+        <div class="radio-row">
+            <label>
+                <input type="radio" name="attending" value="yes" required>
+                <span>
+                    <span data-lang="en">✅ Yes, with joy!</span>
+                    <span data-lang="pl">✅ Tak, z radością!</span>
+                </span>
+            </label>
+            <label>
+                <input type="radio" name="attending" value="no">
+                <span>
+                    <span data-lang="en">😔 Sadly, I cannot</span>
+                    <span data-lang="pl">😔 Niestety nie mogę</span>
+                </span>
+            </label>
+        </div>
+
+        <!-- Guest count -->
+        <label for="number_of_guests">
+            <span data-lang="en">How many people on your side will attend the wedding? <span class="required">*</span></span>
+            <span data-lang="pl">Ile osób z Twojej strony weźmie udział w ślubie? <span class="required">*</span></span>
+        </label>
+        <input type="number" id="number_of_guests" name="number_of_guests" min="1" max="20" value="1">
+        <div class="hint" style="margin-top:4px;font-size:12px;color:#888;">
+            <span data-lang="en">Include yourself in the count.</span>
+            <span data-lang="pl">Wlicz siebie w tę liczbę.</span>
+        </div>
+
+        <!-- Children under 5 -->
+        <label for="children_under_5">
+            <span data-lang="en">How many children under 5 years old?</span>
+            <span data-lang="pl">Ile dzieci poniżej 5 roku życia?</span>
+        </label>
+        <input type="number" id="children_under_5" name="children_under_5" min="0" max="20" value="0">
+
+        <!-- Name of companion (single +1) -->
+        <label for="additional_names">
+            <span data-lang="en">Name of person coming with you <span style="font-weight:normal;color:#999;">(optional)</span></span>
+            <span data-lang="pl">Imię osoby, która Ci towarzyszy <span style="font-weight:normal;color:#999;">(opcjonalnie)</span></span>
+        </label>
+        <input type="text" id="additional_names" name="additional_names" placeholder="e.g. Anna Smith">
+
+        <hr class="divider">
+
+        <!-- Meal preference -->
+        <label for="meal_preference">
+            <span data-lang="en">Meal preference</span>
+            <span data-lang="pl">Preferencje żywieniowe</span>
+        </label>
+        <select id="meal_preference" name="meal_preference">
+            <option value="">—</option>
+            <option value="standard" data-en="Standard menu" data-pl="Menu standardowe">Standard menu</option>
+            <option value="vegetarian" data-en="Vegetarian" data-pl="Wegetariańskie">Vegetarian</option>
+        </select>
+
+        <!-- Dietary restrictions -->
+        <label for="dietary_restrictions">
+            <span data-lang="en">Allergies or dietary restrictions</span>
+            <span data-lang="pl">Alergie lub ograniczenia dietetyczne</span>
+        </label>
+        <input type="text" id="dietary_restrictions" name="dietary_restrictions"
+               placeholder="e.g. peanut allergy, lactose intolerance">
+
+        <!-- Special message -->
+        <label for="message">
+            <span data-lang="en">A special message or wish for the couple 💐</span>
+            <span data-lang="pl">Życzenia dla pary młodej 💐</span>
+        </label>
+        <textarea id="message" name="message" rows="4"
+                  placeholder="Optional"></textarea>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn">
+            <span data-lang="en">Submit Reservation</span>
+            <span data-lang="pl">Wyślij rezerwację</span>
+        </button>
+    </form>
+</div>
+
+<script>
+    // Disable the count fields when declining (counts forced to 0 server-side).
+    // Re-enable when attending so the guest picks at least 1.
+    document.querySelectorAll('input[name="attending"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const numField = document.getElementById('number_of_guests');
+            const kidsField = document.getElementById('children_under_5');
+            const declining = (radio.value === 'no' && radio.checked);
+            if (numField) {
+                numField.disabled = declining;
+                if (!declining && (!numField.value || parseInt(numField.value, 10) < 1)) {
+                    numField.value = 1;
+                }
+            }
+            if (kidsField) kidsField.disabled = declining;
+        });
+    });
+
+    function setLang(lang) {
+        document.body.classList.remove('lang-en', 'lang-pl');
+        document.body.classList.add('lang-' + lang);
+        document.getElementById('language').value = lang;
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        document.getElementById('btn-pl').classList.toggle('active', lang === 'pl');
+
+        // Translate the meal-preference dropdown options
+        document.querySelectorAll('#meal_preference option[data-' + lang + ']').forEach(opt => {
+            opt.textContent = opt.getAttribute('data-' + lang);
+        });
+
+        // Translate placeholders
+        const placeholders = {
+            en: {
+                dietary_restrictions: 'e.g. peanut allergy, lactose intolerance',
+                message: 'Optional',
+            },
+            pl: {
+                dietary_restrictions: 'np. alergia na orzeszki, nietolerancja laktozy',
+                message: 'Opcjonalnie',
+            },
+        };
+        for (const [id, text] of Object.entries(placeholders[lang])) {
+            const el = document.getElementById(id);
+            if (el) el.setAttribute('placeholder', text);
+        }
+    }
+</script>
+
+</body>
+</html>
