@@ -330,18 +330,26 @@
             z-index: 5;
             white-space: nowrap;
         }
+        /* AGGRESSIVE defensive rules — guarantee rows are visible no matter
+           what CSS conflict, browser quirk, or cache is in play. */
         tr.row {
             cursor: pointer;
             transition: background 0.12s;
-            display: table-row;        /* defensive: never collapse */
+            display: table-row !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         tr.row td {
-            display: table-cell;       /* defensive: ensure cells render */
-            min-height: 40px;
+            display: table-cell !important;
+            visibility: visible !important;
+            min-height: 50px;
+            color: var(--brown-dark) !important;
+            background: #fff;
         }
-        tr.row:hover td { background: #faf6ef; }
+        tr.row:hover td { background: #faf6ef !important; }
         tr:last-child td { border-bottom: none; }
-        tr.row.hidden { display: none; }
+        /* Only the search filter can hide rows; only when the user types */
+        tr.row.search-hidden { display: none !important; }
         .col-num {
             text-align: center;
             color: var(--brown);
@@ -613,7 +621,8 @@
     {% if attending_rows or declined_rows %}
         <!-- TOOLBAR: search only (attending shown by default, declined in separate section below) -->
         <div class="toolbar">
-            <input type="search" id="searchBox" placeholder="🔍 Search by name, +1, phone, message...">
+            <input type="search" id="searchBox" placeholder="🔍 Search by name, +1, phone, message..."
+                   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             <div class="row-count">Showing <strong id="visibleCount">{{ attending_rows|length }}</strong> of {{ attending_rows|length }} attending</div>
         </div>
 
@@ -709,12 +718,22 @@
     const rows = document.querySelectorAll('#rsvpTable tbody tr');
     const visibleCount = document.getElementById('visibleCount');
 
+    // Defensive: on page load, force-clear the search box (in case a browser
+    // autofills it) and make sure no row is hidden. Without this, autofill
+    // could silently filter the table to "no matches" on first paint.
+    if (searchBox) searchBox.value = '';
+    rows.forEach(row => {
+        row.classList.remove('search-hidden');
+        row.classList.remove('hidden');   // legacy class name, scrub it too
+    });
+    if (visibleCount) visibleCount.textContent = rows.length;
+
     function applySearch() {
         const q = (searchBox?.value || '').trim().toLowerCase();
         let visible = 0;
         rows.forEach(row => {
-            const show = !q || row.dataset.search.includes(q);
-            row.classList.toggle('hidden', !show);
+            const show = !q || (row.dataset.search || '').includes(q);
+            row.classList.toggle('search-hidden', !show);
             if (show) visible++;
         });
         if (visibleCount) visibleCount.textContent = visible;
